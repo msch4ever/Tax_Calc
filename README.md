@@ -59,6 +59,11 @@ You control what data you upload. Your financial information never leaves your c
 - ✅ **Rate Comparison** - Shows both daily and yearly calculations side-by-side
 - ✅ **Tax Optimization** - Recommends which rate method saves more money
 
+### Internationalization (i18n)
+- ✅ **Multi-Language Support** - Available in English (EN), Czech (CZ), Russian (RU), and Ukrainian (UK)
+- ✅ **URL-Based Switching** - Change language dynamically using the toggle or `?lang=XX` URL parameters
+- ✅ **Easy to Expand** - Easily add new languages via standard Spring Boot resource bundles (`messages_XX.properties`)
+
 ### User Experience
 - ✅ **Web Interface** - Simple file upload form
 - ✅ **Excel Support** - Direct upload of E-Trade .xlsx files
@@ -399,7 +404,7 @@ Add ESPP purchase discount calculation
 - [ ] **Batch Processing** - Process multiple years at once
 - [ ] **Test Data Generator** - Create sample Excel files for testing
 - [ ] **Dark Mode** - UI theme toggle
-- [ ] **Localization** - Czech, Ukrainian, Russian (without flag if we will use icons to switch) language support
+- [x] **Localization** - English, Czech, Russian, and Ukrainian language support
 
 ### Out of Scope (Against Local-First Philosophy)
 These features will **NOT** be implemented as they contradict the tool's privacy-first, local-only design:
