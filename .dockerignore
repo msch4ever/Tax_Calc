@@ -1,0 +1,41 @@
+# Build outputs
+build/
+out/
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Test data and sources (not needed in image)
+sources/
+*.xlsx
+*.csv
+
+# Documentation
+*.md
+LICENSE
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local config
+.env
+*.local
+

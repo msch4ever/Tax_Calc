@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Tax Calculator (RSU &amp; ESPP)</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #333; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #444;
+        }
+        input[type="file"], input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="file"] { padding: 8px; }
+        .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover:not(:disabled) { background: #0055aa; }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c00;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+        .info-box {
+            background: #f0f7ff;
+            border: 1px solid #cce;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .info-box h3 { margin-top: 0; color: #336; }
+        .info-box ul { margin: 0; padding-left: 20px; }
+        .checkbox-group {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .checkbox-item label {
+            display: inline;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="support-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span>☕ <strong>Found this useful?</strong> Buy me a coffee via my Revolut tag!</span>
+        <a href="https://revolut.me/los" target="_blank" style="background: white; color: #667eea; padding: 4px 16px; border-radius: 15px; font-weight: bold; text-decoration: none;">@los</a>
+        <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> 💜</span>
+    </div>
+
+    <h1>🇨🇿 Stock Tax Calculator</h1>
+    <p>Calculate taxable amounts for E-Trade RSU and ESPP transactions according to Czech tax law.</p>
+
+    <div class="card">
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+
+        <form action="/calculate" method="post" enctype="multipart/form-data" id="calcForm">
+            <div class="form-group">
+                <label>Plan Types to Calculate</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="processRsu" name="processRsu" value="true" checked>
+                        <label for="processRsu">RSU (Restricted Stock Units)</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="processEspp" name="processEspp" value="true">
+                        <label for="processEspp">ESPP (Employee Stock Purchase Plan)</label>
+                    </div>
+                </div>
+                <p class="hint">Select which plan types to include in calculations</p>
+            </div>
+
+            <div class="form-group">
+                <label for="benefitHistoryFile">Benefit History (Excel file)</label>
+                <input type="file" id="benefitHistoryFile" name="benefitHistoryFile" accept=".csv,.xlsx,.xls" required>
+                <p class="hint">At Work → My Account → Benefit History → Download Expanded</p>
+            </div>
+
+            <div class="form-group">
+                <label for="gainsLossesFile">Gains &amp; Losses (Excel file)</label>
+                <input type="file" id="gainsLossesFile" name="gainsLossesFile" accept=".csv,.xlsx,.xls" required>
+                <p class="hint">At Work → My Account → Gains &amp; Losses → Pick Year → Download Expanded</p>
+            </div>
+
+            <div class="form-group">
+                <label for="taxYear">Tax Year</label>
+                <input type="number" id="taxYear" name="taxYear" th:value="${currentYear}" min="2020" max="2030" required>
+            </div>
+
+            <div class="form-group">
+                <label>Exchange Rates</label>
+                <p class="hint" style="margin-top: 0;">
+                    <strong>Yearly Average Rates (GFŘ "jednotný kurz"):</strong><br>
+                    2019: 22.93 | 2020: 23.14 | 2021: 21.72 | 2022: 23.41 | 2023: 22.14 | 2024: 23.28 | <strong>2025: 21.84</strong><br>
+                    Daily rates are fetched from CNB for all years.
+                </p>
+            </div>
+
+            <button type="submit" id="submitBtn">Calculate</button>
+        </form>
+    </div>
+
+    <script>
+        // Disable submit button if no plan type selected
+        function updateSubmitButton() {
+            const rsu = document.getElementById('processRsu').checked;
+            const espp = document.getElementById('processEspp').checked;
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = !rsu && !espp;
+            btn.textContent = btn.disabled ? 'Select at least one plan type' : 'Calculate';
+        }
+        document.getElementById('processRsu').addEventListener('change', updateSubmitButton);
+        document.getElementById('processEspp').addEventListener('change', updateSubmitButton);
+        updateSubmitButton();
+    </script>
+    
+    <div class="info-box">
+        <h3>ℹ️ How to export from E-Trade</h3>
+        <ul>
+            <li><strong>Benefit History</strong> (BenefitHistory.xlsx):<br>
+                At Work → My Account → Benefit History → <em>Download Expanded</em><br>
+                <span style="color:#666">(Downloads Excel with "ESPP" and "Restricted Stock" sheets)</span></li>
+            <li><strong>Gains &amp; Losses</strong> (G&amp;L_Expanded.xlsx):<br>
+                At Work → My Account → Gains &amp; Losses → Pick Year (e.g., 2025) → <em>Download Expanded</em><br>
+                <span style="color:#666">(Contains both RSU and ESPP sell transactions)</span></li>
+        </ul>
+        <p style="margin-top: 12px; color: #060;">✅ Just upload the Excel files directly - no conversion needed!</p>
+    </div>
+
+    <div class="info-box" style="background: #fff8e6; border-color: #ffe0a0;">
+        <h3>📄 Tax Guide</h3>
+        <p style="margin: 0;">
+            <a href="/tax-guide" style="color: #0066cc; font-weight: 600;">
+                📖 View: Czech Tax Rules for RSU & ESPP Income
+            </a>
+        </p>
+        <p class="hint" style="margin-top: 8px;">Learn how to properly report stock compensation in your Czech tax return with examples.</p>
+    </div>
+
+    <div class="info-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; text-align: center;">
+        <h3 style="color: white; margin-top: 0;">☕ Support This Project</h3>
+        <p style="margin: 8px 0; opacity: 0.9;">If this tool saved you time or money, consider buying me a coffee via my Revolut tag!</p>
+        <a href="https://revolut.me/los" target="_blank" style="font-size: 24px; font-weight: bold; background: white; color: #667eea; padding: 6px 20px; border-radius: 20px; display: inline-block; margin: 8px 0; text-decoration: none;">
+            @los
+        </a>
+        <p style="margin: 8px 0; opacity: 0.8; font-size: 13px;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> · Any amount appreciated 💜</p>
+    </div>
+</body>
+</html>
+

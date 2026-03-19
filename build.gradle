@@ -1,0 +1,65 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '3.2.3'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.klos.automation'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // CSV parsing
+    implementation 'com.opencsv:opencsv:5.9'
+
+    // Excel (XLSX) parsing
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+    // JSON parsing
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation platform('org.junit:junit-bom:5.11.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.26.0'
+}
+
+// CLI application (./gradlew run)
+application {
+    mainClass = 'com.klos.automation.taxable.TaxableAmountCalculator'
+}
+
+// Web application (./gradlew bootRun and bootJar)
+springBoot {
+    mainClass = 'com.klos.automation.taxable.TaxCalculatorApplication'
+}
+
+// Ensure bootRun uses Spring Boot main class
+tasks.named('bootRun') {
+    mainClass = 'com.klos.automation.taxable.TaxCalculatorApplication'
+}
+
+// Ensure bootJar uses Spring Boot main class (for Docker)
+tasks.named('bootJar') {
+    mainClass = 'com.klos.automation.taxable.TaxCalculatorApplication'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+

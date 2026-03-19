@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Czech Tax Guide - RSU & ESPP</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        h1 { color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px; }
+        h2 { color: #0066cc; margin-top: 30px; }
+        h3 { color: #444; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .example {
+            background: #f8f9fa;
+            border-left: 4px solid #0066cc;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .important {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin: 16px 0;
+        }
+        .important strong { color: #856404; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th { background: #f0f7ff; }
+        a { color: #0066cc; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .support-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .support-box h3 { color: white; margin-top: 0; }
+        .support-box .revolut-tag {
+            font-size: 28px;
+            font-weight: bold;
+            background: white;
+            color: #667eea;
+            padding: 8px 24px;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 12px 0;
+        }
+        .support-box p { margin: 8px 0; opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="support-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span>☕ <strong>Found this useful?</strong> Buy me a coffee via my Revolut tag!</span>
+        <a href="https://revolut.me/los" target="_blank" style="background: white; color: #667eea; padding: 4px 16px; border-radius: 15px; font-weight: bold; text-decoration: none;">@los</a>
+        <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> 💜</span>
+    </div>
+
+    <a href="/" class="back-link">← Back to Calculator</a>
+
+    <h1>🇨🇿 Czech Tax Guide for RSU & ESPP</h1>
+    <p>How to properly report stock compensation income in your Czech tax return.</p>
+
+    <div class="card">
+        <h2>Czech Tax Rates (2025)</h2>
+        <p>The Czech Republic uses a <strong>progressive tax system</strong>:</p>
+        <table>
+            <tr>
+                <th>Income Level</th>
+                <th>Tax Rate</th>
+            </tr>
+            <tr>
+                <td>Up to <strong>CZK 1,676,052</strong></td>
+                <td><strong>15%</strong></td>
+            </tr>
+            <tr>
+                <td>Above <strong>CZK 1,676,052</strong></td>
+                <td><strong>23%</strong></td>
+            </tr>
+        </table>
+        <p style="font-size: 13px; color: #666; margin-top: 8px;">
+            This applies to your total taxable income including employment income, RSU/ESPP income, and capital gains.
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>Tax Exemptions for Share Sales</h2>
+        <ul>
+            <li><strong>CZK 100,000 threshold:</strong> If total annual gross income from ALL share sales &lt; CZK 100,000 → fully exempt (regardless of holding period)</li>
+            <li><strong>3-year holding rule:</strong> If shares held &gt; 3 years AND total gross proceeds &lt; CZK 40,000,000 → exempt</li>
+            <li>Losses from exempt shares <strong>cannot</strong> be offset against taxable gains</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Acquisition Price (Cost Basis)</h2>
+        <table>
+            <tr>
+                <th>Plan Type</th>
+                <th>Acquisition Price</th>
+                <th>Explanation</th>
+            </tr>
+            <tr>
+                <td><strong>RSU</strong></td>
+                <td>FMV at vest date</td>
+                <td>Fair Market Value when shares vested</td>
+            </tr>
+            <tr>
+                <td><strong>ESPP</strong></td>
+                <td>FMV at purchase date</td>
+                <td>FMV (not discounted price!) because discount was already taxed as income</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Exchange Rate Rules</h2>
+        <div class="important">
+            <strong>⚠️ Important:</strong> You can choose between daily CNB rates OR yearly average (GFŘ) rates, 
+            but must be <strong>consistent</strong> for all transactions in the tax year.
+        </div>
+        
+        <h3>For Capital Gains (Yearly Average Method)</h3>
+        <table>
+            <tr>
+                <th>Component</th>
+                <th>Exchange Rate to Use</th>
+            </tr>
+            <tr>
+                <td>Sale Proceeds</td>
+                <td>Yearly average rate for <strong>SALE year</strong></td>
+            </tr>
+            <tr>
+                <td>Cost Basis (Acquisition Price)</td>
+                <td>Yearly average rate for <strong>VEST/PURCHASE year</strong></td>
+            </tr>
+        </table>
+        <p><em>When selling shares vested in previous years, use different yearly rates!</em></p>
+    </div>
+
+    <div class="card">
+        <h2>Capital Gains/Loss Calculation</h2>
+        <p>When you sell shares, you need to calculate whether you made a <strong>profit</strong> or a <strong>loss</strong>:</p>
+
+        <div class="example" style="background: #e8f5e9; border-left-color: #4caf50;">
+<strong>Formula:</strong><br>
+Profit/Loss = (Sale Price × Quantity × Sale Year Rate) − (Acquisition Price × Quantity × Acquisition Year Rate) − Transaction Costs
+        </div>
+
+        <h3 style="margin-top: 20px;">If You Made a PROFIT (Gain)</h3>
+        <ul>
+            <li>The profit is <strong>taxable as "other income"</strong> (unless exempt)</li>
+            <li>Add to your total taxable income for the year</li>
+            <li>Tax rate: 15% (or 23% if total income exceeds CZK 1,676,052)</li>
+        </ul>
+
+        <h3>If You Made a LOSS</h3>
+        <ul>
+            <li>Losses are <strong>not directly taxable</strong> but must still be reported</li>
+            <li>Losses can <strong>offset gains</strong> from other share sales in the same year</li>
+            <li>Losses <strong>cannot</strong> be carried forward to future years</li>
+            <li>Losses from <strong>exempt sales cannot</strong> offset taxable gains</li>
+        </ul>
+
+        <div class="important">
+            <strong>💡 Tax Optimization:</strong> If you have both gains and losses in the same year,
+            the losses reduce your taxable gains. Choose daily or yearly rates consistently to minimize your tax.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Example: RSU Capital Gains Calculation</h2>
+        <p>You sell 100 shares that vested in 2025:</p>
+        <div class="example">
+Sale price per share: $40<br>
+FMV at vest (acquisition price): $30<br>
+Exchange rate (2025): 21.84 CZK/USD<br>
+<br>
+<strong>Income:</strong> $40 × 100 × 21.84 = <strong>CZK 87,360</strong><br>
+<strong>Expenses:</strong> $30 × 100 × 21.84 = <strong>CZK 65,520</strong><br>
+<strong>Profit:</strong> 87,360 − 65,520 = <strong>CZK 21,840</strong> (taxable)
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Example: ESPP Capital Gains Calculation</h2>
+        <p>You sell 100 ESPP shares purchased in 2025:</p>
+        <div class="example">
+Sale price per share: $35<br>
+FMV at purchase: $30 (this is the acquisition price!)<br>
+Discounted purchase price: $25 (already taxed as income)<br>
+Exchange rate (2025): 21.84 CZK/USD<br>
+<br>
+<strong>Income:</strong> $35 × 100 × 21.84 = <strong>CZK 76,440</strong><br>
+<strong>Expenses:</strong> $30 × 100 × 21.84 = <strong>CZK 65,520</strong><br>
+<strong>Profit:</strong> 76,440 − 65,520 = <strong>CZK 10,920</strong> (taxable)
+        </div>
+        <div class="important">
+            <strong>Note:</strong> The FMV at purchase ($30) is used as acquisition price, NOT the discounted price ($25),
+            because the discount benefit was already declared as employment income.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Tax Return Reporting</h2>
+        <ul>
+            <li>Gross income from share sales and related expenses go on <strong>Line 40</strong> of Czech PITR</li>
+            <li>Also report in <strong>Attachment 2</strong> (Lines 207 and 208)</li>
+            <li>Losses must be declared but can only offset gains from other securities in the same year</li>
+            <li>Losses <strong>cannot</strong> be carried forward to future years</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Official Resources</h2>
+        <ul>
+            <li><a href="https://financnisprava.gov.cz/assets/cs/prilohy/d-sprava-dani-a-poplatku/Pokyn_GFR_D-75_podpis.pdf" target="_blank">
+                GFŘ D-75: Official yearly average exchange rates for 2025</a></li>
+            <li><a href="https://financnisprava.gov.cz/assets/cs/prilohy/d-sprava-dani-a-poplatku/Pokyn_GFR-D-66.pdf" target="_blank">
+                GFŘ D-66: Official yearly average exchange rates for 2024</a></li>
+            <li><a href="https://api.cnb.cz/cnbapi/exrates/daily" target="_blank">
+                CNB API: Daily exchange rates</a></li>
+        </ul>
+    </div>
+
+    <div class="support-box">
+        <h3>🙏 Support This Project</h3>
+        <p>This tool is free and open source. If it helped with your taxes, consider a small donation!</p>
+        <a href="https://revolut.me/los" target="_blank" class="revolut-tag" style="text-decoration: none;">@los</a>
+        <p>Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> · Or share with colleagues! 💜</p>
+    </div>
+
+    <p style="text-align: center; color: #666; margin-top: 30px;">
+        <a href="/">← Back to Calculator</a>
+    </p>
+</body>
+</html>
+
