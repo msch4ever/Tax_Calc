@@ -60,7 +60,7 @@ You control what data you upload. Your financial information never leaves your c
 - ✅ **Tax Optimization** - Recommends which rate method saves more money
 
 ### Internationalization (i18n)
-- ✅ **Multi-Language Support** - Available in English (EN), Czech (CZ), Russian (RU), and Ukrainian (UK)
+- ✅ **Multi-Language Support** - Available in English (EN), Czech (CZ), Russian (RU), and Ukrainian (UA)
 - ✅ **URL-Based Switching** - Change language dynamically using the toggle or `?lang=XX` URL parameters
 - ✅ **Easy to Expand** - Easily add new languages via standard Spring Boot resource bundles (`messages_XX.properties`)
 
