@@ -420,87 +420,88 @@
 
     <!-- Recommendation -->
     <div class="card" style="background: #f0fff0; border: 2px solid #090;">
-        <h2 style="color: #060;">💡 Recommendation</h2>
+        <h2 style="color: #060;">💡 <span th:text="#{report.rec.title}">Recommendation</span></h2>
         <p style="font-size: 18px; margin: 16px 0;">
-            <strong>Use <span th:text="${recommendation.betterRate == 'daily' ? 'Daily Transaction Rates' : 'Yearly Average Rate'}"></span></strong>
-            to save <strong th:text="${#numbers.formatDecimal(recommendation.savings, 1, 'COMMA', 2, 'POINT')}"></strong> CZK
+            <strong th:text="#{report.rec.use}">Use</strong>
+            <strong><span th:text="${recommendation.betterRate == 'daily' ? #messages.msg('report.rec.daily') : #messages.msg('report.rec.yearly')}"></span></strong>
+            <span th:text="#{report.rec.toSave}">to save</span> <strong th:text="${#numbers.formatDecimal(recommendation.savings, 1, 'COMMA', 2, 'POINT')}"></strong> CZK
         </p>
 
         <!-- Fun Savings Equivalents -->
         <div th:if="${recommendation.savings > 0}" style="background: #fff; border-radius: 8px; padding: 16px; margin: 16px 0; border: 1px solid #ccc;">
             <p style="font-size: 14px; color: #333; margin: 0 0 12px 0;">
-                <strong>🎉 That's enough for:</strong>
+                <strong>🎉 <span th:text="#{report.rec.enoughFor}">That's enough for:</span></strong>
             </p>
             <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #555;">
                 <!-- Always show lunches -->
                 <li style="margin-bottom: 6px;">
                     <strong th:text="${#numbers.formatDecimal(recommendation.savings / 200, 0, 'COMMA', 0, 'POINT')}"></strong>
-                    lunches in Karlín 🍽️ (@ 200 CZK each)
+                    <span th:text="#{report.rec.lunches}">lunches in Karlín 🍽️ (@ 200 CZK each)</span>
                 </li>
 
                 <!-- < 10k CZK -->
-                <li th:if="${recommendation.savings < 10000}" style="margin-bottom: 6px;">
+                <li th:if="${recommendation.savings < 10000}" style="margin-bottom: 6px;" th:text="#{report.rec.fancyDinner}">
                     A fancy dinner for two at Lokál 🍺
                 </li>
 
                 <!-- 10k - 25k CZK -->
-                <li th:if="${recommendation.savings >= 10000 and recommendation.savings < 25000}" style="margin-bottom: 6px;">
+                <li th:if="${recommendation.savings >= 10000 and recommendation.savings < 25000}" style="margin-bottom: 6px;" th:text="#{report.rec.weekendTrip}">
                     Weekend trip to Vienna or Budapest 🚂
                 </li>
 
                 <!-- 25k - 100k CZK -->
-                <li th:if="${recommendation.savings >= 25000 and recommendation.savings < 100000}" style="margin-bottom: 6px;">
+                <li th:if="${recommendation.savings >= 25000 and recommendation.savings < 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.croatia}">
                     A week-long vacation in Croatia ⛱️
                 </li>
-                <li th:if="${recommendation.savings >= 25000 and recommendation.savings < 100000}" style="margin-bottom: 6px;">
+                <li th:if="${recommendation.savings >= 25000 and recommendation.savings < 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.macbook}">
                     New MacBook Air (or half of a Pro) 💻
                 </li>
 
                 <!-- >= 100k CZK -->
-                <li th:if="${recommendation.savings >= 100000}" style="margin-bottom: 6px;">
+                <li th:if="${recommendation.savings >= 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.thailand}">
                     Two weeks in Thailand with flights 🏝️
                 </li>
-                <li th:if="${recommendation.savings >= 100000}" style="margin-bottom: 6px;">
+                <li th:if="${recommendation.savings >= 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.car}">
                     A decent used car (or down payment on a new one) 🚗
                 </li>
                 <li th:if="${recommendation.savings >= 100000}" style="margin-bottom: 6px;">
                     <strong th:text="${#numbers.formatDecimal(recommendation.savings / 160000, 1, 'COMMA', 1, 'POINT')}"></strong>
-                    m² of Prague apartment (@ 160k CZK/m²) 🏠
+                    <span th:text="#{report.rec.apartment}">m² of Prague apartment (@ 160k CZK/m²) 🏠</span>
                 </li>
             </ul>
-            <p style="font-size: 12px; color: #888; margin: 12px 0 0 0; font-style: italic;">
+            <p style="font-size: 12px; color: #888; margin: 12px 0 0 0; font-style: italic;" th:text="#{report.rec.smart}">
                 Smart tax planning = more money for the things that matter! 💰
             </p>
         </div>
 
-        <h3 style="color: #060; margin-top: 20px; margin-bottom: 12px;">📊 Taxable Income Summary</h3>
+        <h3 style="color: #060; margin-top: 20px; margin-bottom: 12px;">📊 <span th:text="#{report.incomeSummary.title}">Taxable Income Summary</span></h3>
         <table style="font-size: 14px; width: auto;">
             <tr th:if="${processRsu}">
-                <td style="padding: 4px 16px 4px 0;">RSU taxable (daily / yearly):</td>
+                <td style="padding: 4px 16px 4px 0;" th:text="#{report.incomeSummary.rsu}">RSU taxable (daily / yearly):</td>
                 <td th:text="${#numbers.formatDecimal(recommendation.rsuTotalDaily, 1, 'COMMA', 2, 'POINT') + ' / ' + #numbers.formatDecimal(recommendation.rsuTotalYearly, 1, 'COMMA', 2, 'POINT') + ' CZK'}"></td>
             </tr>
             <tr th:if="${processEspp}">
-                <td style="padding: 4px 16px 4px 0;">ESPP taxable (daily / yearly):</td>
+                <td style="padding: 4px 16px 4px 0;" th:text="#{report.incomeSummary.espp}">ESPP taxable (daily / yearly):</td>
                 <td th:text="${#numbers.formatDecimal(recommendation.esppTotalDaily, 1, 'COMMA', 2, 'POINT') + ' / ' + #numbers.formatDecimal(recommendation.esppTotalYearly, 1, 'COMMA', 2, 'POINT') + ' CZK'}"></td>
             </tr>
             <tr style="font-weight: 600;">
-                <td style="padding: 4px 16px 4px 0;">Grand total (daily / yearly):</td>
+                <td style="padding: 4px 16px 4px 0;" th:text="#{report.incomeSummary.grandTotal}">Grand total (daily / yearly):</td>
                 <td th:text="${#numbers.formatDecimal(recommendation.grandTotalDaily, 1, 'COMMA', 2, 'POINT') + ' / ' + #numbers.formatDecimal(recommendation.grandTotalYearly, 1, 'COMMA', 2, 'POINT') + ' CZK'}"></td>
             </tr>
         </table>
 
-        <h3 style="color: #060; margin-top: 24px; margin-bottom: 12px;">💰 Estimated Tax Due</h3>
+        <h3 style="color: #060; margin-top: 24px; margin-bottom: 12px;">💰 <span th:text="#{report.taxDue.title}">Estimated Tax Due</span></h3>
         <table style="font-size: 14px; border-collapse: collapse;">
             <thead>
                 <tr style="background: #e0f0e0;">
-                    <th style="padding: 8px 16px; text-align: left; border: 1px solid #090;">Tax Rate</th>
-                    <th style="padding: 8px 16px; text-align: right; border: 1px solid #090;">Daily Rates</th>
-                    <th style="padding: 8px 16px; text-align: right; border: 1px solid #090;">Yearly Average</th>
+                    <th style="padding: 8px 16px; text-align: left; border: 1px solid #090;" th:text="#{report.taxDue.taxRate}">Tax Rate</th>
+                    <th style="padding: 8px 16px; text-align: right; border: 1px solid #090;" th:text="#{report.taxDue.dailyRates}">Daily Rates</th>
+                    <th style="padding: 8px 16px; text-align: right; border: 1px solid #090;" th:text="#{report.taxDue.yearlyAvg}">Yearly Average</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td style="padding: 8px 16px; border: 1px solid #ccc;"><strong>15%</strong> (up to 1,676,052 CZK)</td>
+                    <td style="padding: 8px 16px; border: 1px solid #ccc;"><strong th:text="#{report.taxDue.upto15}">15% (up to 1,676,052 CZK)</strong></td>
                     <td style="padding: 8px 16px; text-align: right; border: 1px solid #ccc;"
                         th:text="${#numbers.formatDecimal(recommendation.grandTotalDaily * 0.15, 1, 'COMMA', 2, 'POINT') + ' CZK'}"
                         th:classappend="${recommendation.betterRate == 'daily' ? 'better' : ''}"></td>
@@ -509,7 +510,7 @@
                         th:classappend="${recommendation.betterRate == 'yearly' ? 'better' : ''}"></td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px 16px; border: 1px solid #ccc;"><strong>23%</strong> (above 1,676,052 CZK)</td>
+                    <td style="padding: 8px 16px; border: 1px solid #ccc;"><strong th:text="#{report.taxDue.above23}">23% (above 1,676,052 CZK)</strong></td>
                     <td style="padding: 8px 16px; text-align: right; border: 1px solid #ccc;"
                         th:text="${#numbers.formatDecimal(recommendation.grandTotalDaily * 0.23, 1, 'COMMA', 2, 'POINT') + ' CZK'}"
                         th:classappend="${recommendation.betterRate == 'daily' ? 'better' : ''}"></td>
@@ -519,11 +520,11 @@
                 </tr>
             </tbody>
         </table>
-        <p style="font-size: 12px; color: #666; margin-top: 8px;">
+        <p style="font-size: 12px; color: #666; margin-top: 8px;" th:text="#{report.taxDue.note}">
             ℹ️ Progressive tax: 15% applies to income up to CZK 1,676,052; 23% applies to income above this threshold.
         </p>
 
-        <p style="font-size: 12px; color: #666; margin-top: 16px;">
+        <p style="font-size: 12px; color: #666; margin-top: 16px;" th:text="#{report.taxDue.disclaimer}">
             ⚠️ This is for informational purposes only, not financial or tax advice.
             Consult a tax professional for your specific situation.
         </p>
@@ -531,20 +532,20 @@
 
     <!-- Support Banner -->
     <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; text-align: center;">
-        <h3 style="color: white; margin-top: 0;">☕ Did this save you time or money?</h3>
-        <p style="margin: 8px 0; opacity: 0.9;">Consider buying me a coffee via my Revolut tag to support this project!</p>
+        <h3 style="color: white; margin-top: 0;">☕ <span th:text="#{support.banner.title}">Did this save you time or money?</span></h3>
+        <p style="margin: 8px 0; opacity: 0.9;" th:text="#{support.banner.desc}">Consider buying me a coffee via my Revolut tag to support this project!</p>
         <a href="https://revolut.me/los" target="_blank" style="font-size: 28px; font-weight: bold; background: white; color: #667eea; padding: 8px 28px; border-radius: 25px; display: inline-block; margin: 12px 0; text-decoration: none;">
             @los
         </a>
         <p style="margin: 8px 0; opacity: 0.9; font-size: 14px;">
             <a href="https://revolut.me/los" target="_blank" style="color: white; font-weight: 600;">revolut.me/los</a>
-            <span style="opacity: 0.7;">· @los is my Revolut tag · Any amount appreciated 💜</span>
+            <span style="opacity: 0.7;">· @los is my <span th:text="#{support.banner.tag}">Revolut tag</span> · <span th:text="#{support.banner.appreciate}">Any amount appreciated</span> 💜</span>
         </p>
     </div>
 
     <!-- Calculation Log -->
     <div class="card">
-        <h2>Calculation Details</h2>
+        <h2 th:text="#{report.log.title}">Calculation Details</h2>
         <div class="log-box" th:text="${logMessages}"></div>
     </div>
 </body>
