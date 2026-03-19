@@ -399,7 +399,7 @@ Add ESPP purchase discount calculation
 - [ ] **Batch Processing** - Process multiple years at once
 - [ ] **Test Data Generator** - Create sample Excel files for testing
 - [ ] **Dark Mode** - UI theme toggle
-- [ ] **Localization** - Czech language support
+- [ ] **Localization** - Czech, Ukrainian, Russian (without flag if we will use icons to switch) language support
 
 ### Out of Scope (Against Local-First Philosophy)
 These features will **NOT** be implemented as they contradict the tool's privacy-first, local-only design:

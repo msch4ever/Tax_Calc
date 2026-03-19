@@ -106,47 +106,52 @@
         <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> 💜</span>
     </div>
 
-    <h1>🇨🇿 Stock Tax Calculator</h1>
-    <p>Calculate taxable amounts for E-Trade RSU and ESPP transactions according to Czech tax law.</p>
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="?lang=en" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold; margin-right: 8px;">🇬🇧 EN</a>
+        <a href="?lang=cs" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold;">🇨🇿 CZ</a>
+    </div>
+
+    <h1>🇨🇿 <span th:text="#{app.title.cz}">Stock Tax Calculator</span></h1>
+    <p th:text="#{form.subtitle}">Calculate taxable amounts for E-Trade RSU and ESPP transactions according to Czech tax law.</p>
 
     <div class="card">
         <div th:if="${error}" class="error" th:text="${error}"></div>
 
         <form action="/calculate" method="post" enctype="multipart/form-data" id="calcForm">
             <div class="form-group">
-                <label>Plan Types to Calculate</label>
+                <label th:text="#{form.planTypes}">Plan Types to Calculate</label>
                 <div class="checkbox-group">
                     <div class="checkbox-item">
                         <input type="checkbox" id="processRsu" name="processRsu" value="true" checked>
-                        <label for="processRsu">RSU (Restricted Stock Units)</label>
+                        <label for="processRsu" th:text="#{form.rsu}">RSU (Restricted Stock Units)</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="processEspp" name="processEspp" value="true">
-                        <label for="processEspp">ESPP (Employee Stock Purchase Plan)</label>
+                        <label for="processEspp" th:text="#{form.espp}">ESPP (Employee Stock Purchase Plan)</label>
                     </div>
                 </div>
-                <p class="hint">Select which plan types to include in calculations</p>
+                <p class="hint" th:text="#{form.planTypeHint}">Select which plan types to include in calculations</p>
             </div>
 
             <div class="form-group">
-                <label for="benefitHistoryFile">Benefit History (Excel file)</label>
+                <label for="benefitHistoryFile" th:text="#{form.benefitHistory}">Benefit History (Excel file)</label>
                 <input type="file" id="benefitHistoryFile" name="benefitHistoryFile" accept=".csv,.xlsx,.xls" required>
                 <p class="hint">At Work → My Account → Benefit History → Download Expanded</p>
             </div>
 
             <div class="form-group">
-                <label for="gainsLossesFile">Gains &amp; Losses (Excel file)</label>
+                <label for="gainsLossesFile" th:text="#{form.gainsLosses}">Gains &amp; Losses (Excel file)</label>
                 <input type="file" id="gainsLossesFile" name="gainsLossesFile" accept=".csv,.xlsx,.xls" required>
                 <p class="hint">At Work → My Account → Gains &amp; Losses → Pick Year → Download Expanded</p>
             </div>
 
             <div class="form-group">
-                <label for="taxYear">Tax Year</label>
+                <label for="taxYear" th:text="#{form.taxYear}">Tax Year</label>
                 <input type="number" id="taxYear" name="taxYear" th:value="${currentYear}" min="2020" max="2030" required>
             </div>
 
             <div class="form-group">
-                <label>Exchange Rates</label>
+                <label th:text="#{form.exchangeRates}">Exchange Rates</label>
                 <p class="hint" style="margin-top: 0;">
                     <strong>Yearly Average Rates (GFŘ "jednotný kurz"):</strong><br>
                     2019: 22.93 | 2020: 23.14 | 2021: 21.72 | 2022: 23.41 | 2023: 22.14 | 2024: 23.28 | <strong>2025: 21.84</strong><br>
@@ -154,7 +159,7 @@
                 </p>
             </div>
 
-            <button type="submit" id="submitBtn">Calculate</button>
+            <button type="submit" id="submitBtn" th:text="#{form.calculate}">Calculate</button>
         </form>
     </div>
 
@@ -173,7 +178,7 @@
     </script>
     
     <div class="info-box">
-        <h3>ℹ️ How to export from E-Trade</h3>
+        <h3 th:text="#{info.exportTitle}">ℹ️ How to export from E-Trade</h3>
         <ul>
             <li><strong>Benefit History</strong> (BenefitHistory.xlsx):<br>
                 At Work → My Account → Benefit History → <em>Download Expanded</em><br>
@@ -186,17 +191,17 @@
     </div>
 
     <div class="info-box" style="background: #fff8e6; border-color: #ffe0a0;">
-        <h3>📄 Tax Guide</h3>
+        <h3 th:text="#{info.guideTitle}">📄 Tax Guide</h3>
         <p style="margin: 0;">
-            <a href="/tax-guide" style="color: #0066cc; font-weight: 600;">
+            <a href="/tax-guide" style="color: #0066cc; font-weight: 600;" th:text="#{info.guideLink}">
                 📖 View: Czech Tax Rules for RSU & ESPP Income
             </a>
         </p>
-        <p class="hint" style="margin-top: 8px;">Learn how to properly report stock compensation in your Czech tax return with examples.</p>
+        <p class="hint" style="margin-top: 8px;" th:text="#{info.guideHint}">Learn how to properly report stock compensation in your Czech tax return with examples.</p>
     </div>
 
     <div class="info-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; text-align: center;">
-        <h3 style="color: white; margin-top: 0;">☕ Support This Project</h3>
+        <h3 style="color: white; margin-top: 0;" th:text="#{support.boxTitle}">☕ Support This Project</h3>
         <p style="margin: 8px 0; opacity: 0.9;">If this tool saved you time or money, consider buying me a coffee via my Revolut tag!</p>
         <a href="https://revolut.me/los" target="_blank" style="font-size: 24px; font-weight: bold; background: white; color: #667eea; padding: 6px 20px; border-radius: 20px; display: inline-block; margin: 8px 0; text-decoration: none;">
             @los
