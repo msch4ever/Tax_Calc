@@ -88,10 +88,15 @@
         <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> 💜</span>
     </div>
 
-    <a href="/" class="back-link">← Back to Calculator</a>
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="?lang=en" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold; margin-right: 8px;">🇬🇧 EN</a>
+        <a href="?lang=cs" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold;">🇨🇿 CZ</a>
+    </div>
 
-    <h1>🇨🇿 Czech Tax Guide for RSU & ESPP</h1>
-    <p>How to properly report stock compensation income in your Czech tax return.</p>
+    <a href="/" class="back-link" th:text="#{nav.back}">← Back to Calculator</a>
+
+    <h1>🇨🇿 <span th:text="#{guide.title}">Czech Tax Guide - RSU & ESPP</span></h1>
+    <p th:text="#{guide.subtitle}">How to properly report stock compensation income in your Czech tax return.</p>
 
     <div class="card">
         <h2>Czech Tax Rates (2025)</h2>
