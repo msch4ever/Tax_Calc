@@ -495,32 +495,32 @@
                     <span th:text="#{report.rec.lunches}">lunches in Karlín 🍽️ (@ 200 CZK each)</span>
                 </li>
 
-                <!-- < 10k CZK -->
-                <li th:if="${recommendation.taxSavings < 10000}" style="margin-bottom: 6px;" th:text="#{report.rec.fancyDinner}">
+                <!-- < 2.5k CZK -->
+                <li th:if="${recommendation.taxSavings < 2500}" style="margin-bottom: 6px;" th:text="#{report.rec.fancyDinner}">
                     A fancy dinner for two at Lokál 🍺
                 </li>
 
-                <!-- 10k - 25k CZK -->
-                <li th:if="${recommendation.taxSavings >= 10000 and recommendation.taxSavings < 25000}" style="margin-bottom: 6px;" th:text="#{report.rec.weekendTrip}">
-                    Weekend trip to Vienna or Budapest 🚂
+                <!-- 2.5k - 6k CZK -->
+                <li th:if="${recommendation.taxSavings >= 2500 and recommendation.taxSavings < 6000}" style="margin-bottom: 6px;" th:text="#{report.rec.groceries}">
+                    Two weeks of groceries for a family of four 🛒
                 </li>
 
-                <!-- 25k - 100k CZK -->
-                <li th:if="${recommendation.taxSavings >= 25000 and recommendation.taxSavings < 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.croatia}">
-                    A week-long vacation in Croatia ⛱️
+                <!-- 6k - 23k CZK -->
+                <li th:if="${recommendation.taxSavings >= 6000 and recommendation.taxSavings < 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.music}">
+                    A year of music classes for your kid 🎹
                 </li>
-                <li th:if="${recommendation.taxSavings >= 25000 and recommendation.taxSavings < 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.macbook}">
-                    New MacBook Air (or half of a Pro) 💻
+                <li th:if="${recommendation.taxSavings >= 6000 and recommendation.taxSavings < 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.golf}">
+                    A few rounds of golf on a nice 18-hole course ⛳
                 </li>
 
-                <!-- >= 100k CZK -->
-                <li th:if="${recommendation.taxSavings >= 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.thailand}">
-                    Two weeks in Thailand with flights 🏝️
+                <!-- >= 23k CZK -->
+                <li th:if="${recommendation.taxSavings >= 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.insurance}">
+                    Annual comprehensive car insurance 🚗
                 </li>
-                <li th:if="${recommendation.taxSavings >= 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.car}">
-                    A decent used car (or down payment on a new one) 🚗
+                <li th:if="${recommendation.taxSavings >= 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.phone}">
+                    A brand new flagship smartphone 📱
                 </li>
-                <li th:if="${recommendation.taxSavings >= 100000}" style="margin-bottom: 6px;">
+                <li th:if="${recommendation.taxSavings >= 23000}" style="margin-bottom: 6px;">
                     <strong th:text="${#numbers.formatDecimal(recommendation.taxSavings / 160000, 1, 'COMMA', 1, 'POINT')}"></strong>
                     <span th:text="#{report.rec.apartment}">m² of Prague apartment (@ 160k CZK/m²) 🏠</span>
                 </li>
