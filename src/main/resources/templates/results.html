@@ -5,36 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Tax Report</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <script th:src="@{/js/theme.js}"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
             max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
-            background: #f5f5f5;
             font-size: 14px;
         }
-        h1, h2, h3 { color: #333; }
         .header { display: flex; justify-content: space-between; align-items: center; }
-        .back-link { color: #0066cc; text-decoration: none; }
+        .back-link { text-decoration: none; }
         .card {
-            background: white;
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px var(--card-shadow);
             margin-bottom: 20px;
             overflow-x: auto;
         }
         .section-header {
-            background: #e8f4ff;
             padding: 12px 20px;
             border-radius: 8px 8px 0 0;
             margin: -20px -20px 20px -20px;
-            border-bottom: 2px solid #0066cc;
-        }
-        .section-header.espp {
-            background: #f0e8ff;
-            border-bottom-color: #6600cc;
+            border-bottom: 2px solid transparent;
         }
         .section-header h2 { margin: 0; }
         table {
@@ -45,24 +39,17 @@
         th, td {
             padding: 6px 8px;
             text-align: right;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid transparent; /* Managed by var(--table-border) via theme.css */
         }
         th {
-            background: #f8f8f8;
             font-weight: 600;
             position: sticky;
             top: 0;
         }
         td:first-child, th:first-child { text-align: left; }
-        .total-row { font-weight: 600; background: #f5f5f5; }
-        .negative { color: #c00; }
-        .positive { color: #090; }
-        .exempt { color: #666; font-style: italic; }
+        .exempt { font-style: italic; }
         .summary-table td, .summary-table th { padding: 10px 16px; }
-        .better { background: #e6ffe6 !important; }
         .log-box {
-            background: #1e1e1e;
-            color: #d4d4d4;
             padding: 16px;
             border-radius: 4px;
             overflow-x: auto;
@@ -73,7 +60,6 @@
             overflow-y: auto;
         }
         .empty-notice {
-            color: #666;
             font-style: italic;
             padding: 20px;
             text-align: center;
@@ -81,23 +67,29 @@
     </style>
 </head>
 <body>
-    <div class="support-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+    <div class="support-banner" style="background: linear-gradient(135deg, var(--banner-bg-1) 0%, var(--banner-bg-2) 100%); color: var(--banner-text); padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
         <span>☕ <strong>Found this useful?</strong> Buy me a coffee via my Revolut tag!</span>
-        <a href="https://revolut.me/los" target="_blank" style="background: white; color: #667eea; padding: 4px 16px; border-radius: 15px; font-weight: bold; text-decoration: none;">@los</a>
-        <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> 💜</span>
+        <a href="https://revolut.me/los" target="_blank" style="background: var(--banner-text); color: var(--banner-bg-1); padding: 4px 16px; border-radius: 15px; font-weight: bold; text-decoration: none;">@los</a>
+        <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: var(--banner-text);">revolut.me/los</a> 💜</span>
     </div>
 
-    <div style="text-align: right; margin-bottom: 20px;">
-        <a href="?lang=en" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold; margin-right: 8px;">🇬🇧 EN</a>
-        <a href="?lang=cs" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold; margin-right: 8px;">🇨🇿 CZ</a>
-        <a href="?lang=ru" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold; margin-right: 8px;">🇺🇳 RU</a>
-        <a href="?lang=ua" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold;">🇺🇦 UA</a>
+    <div class="lang-box">
+        <a href="?lang=en" class="lang-flag">🇬🇧 EN</a>
+        <a href="?lang=cs" class="lang-flag">🇨🇿 CZ</a>
+        <a href="?lang=ua" class="lang-flag">🇺🇦 UA</a>
+        <a href="?lang=ru" class="lang-flag">🇺🇳 RU</a>
+        <button onclick="toggleTheme()" class="theme-toggle">
+            <span class="theme-text dark-text" th:text="#{nav.theme.toggle.dark}">Toggle Dark Mode</span>
+            <span class="theme-text light-text" th:text="#{nav.theme.toggle.light}">Toggle Light Mode</span>
+            <span class="light-icon">💡</span>
+            <span class="dark-icon">🌙</span>
+        </button>
     </div>
 
     <div class="header">
         <h1>🇨🇿 <span th:text="#{app.title.report}">Stock Tax Report</span> - <span th:text="${taxYear}"></span></h1>
         <div>
-            <a href="/tax-guide" style="margin-right: 20px; color: #cc6600;">📄 <span th:text="#{nav.guide}">Tax Guide</span></a>
+            <a href="/tax-guide" style="margin-right: 20px; color: var(--link-color);">📖 <span th:text="#{nav.guide}">Tax Guide</span></a>
             <a href="/" class="back-link">← <span th:text="#{nav.calculate.again}">Calculate Again</span></a>
         </div>
     </div>
@@ -259,7 +251,7 @@
 
         <!-- ESPP Purchase Discount Income -->
         <h3 th:text="#{report.espp.discount.title}">Purchase Discount Income (Taxable as Ordinary Income)</h3>
-        <p style="color: #666; font-size: 12px; margin-bottom: 12px;" th:text="#{report.espp.discount.desc}">
+        <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;" th:text="#{report.espp.discount.desc}">
             The 15% employer discount is taxable income at the time of purchase.
         </p>
         <div th:if="${esppPurchaseReport.purchases.size() == 0}" class="empty-notice" th:text="#{report.empty.esppPurchases}">
@@ -415,14 +407,14 @@
         </table>
 
         <p th:if="${(processRsu and rsuSellReport.totalCapitalGainLossCzkByDate.signum() < 0) or (processEspp and esppSellReport.totalCapitalGainLossCzkByDate.signum() < 0)}"
-           style="color: #666; margin-top: 12px; font-size: 13px;">
+           style="color: var(--text-muted); margin-top: 12px; font-size: 13px;">
             ℹ️ Capital loss is not taxable (counted as 0 in totals) but should be reported to the tax authority as evidence.
         </p>
     </div>
 
     <!-- Recommendation -->
-    <div class="card" style="background: #f0fff0; border: 2px solid #090;">
-        <h2 style="color: #060;">💡 <span th:text="#{report.rec.title}">Recommendation</span></h2>
+    <div class="card" style="background: var(--rec-bg); border: 2px solid var(--rec-border);">
+        <h2 style="color: var(--rec-heading);">💡 <span th:text="#{report.rec.title}">Recommendation</span></h2>
         <p style="font-size: 18px; margin: 16px 0;">
             <strong th:text="#{report.rec.use}">Use</strong>
             <strong><span th:text="${recommendation.betterRate == 'daily' ? #messages.msg('report.rec.daily') : #messages.msg('report.rec.yearly')}"></span></strong>
@@ -430,11 +422,11 @@
         </p>
 
         <!-- Fun Savings Equivalents -->
-        <div th:if="${recommendation.savings > 0}" style="background: #fff; border-radius: 8px; padding: 16px; margin: 16px 0; border: 1px solid #ccc;">
-            <p style="font-size: 14px; color: #333; margin: 0 0 12px 0;">
+        <div th:if="${recommendation.savings > 0}" style="background: var(--card-bg); border-radius: 8px; padding: 16px; margin: 16px 0; border: 1px solid var(--border-color);">
+            <p style="font-size: 14px; color: var(--text-main); margin: 0 0 12px 0;">
                 <strong>🎉 <span th:text="#{report.rec.enoughFor}">That's enough for:</span></strong>
             </p>
-            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #555;">
+            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-muted);">
                 <!-- Always show lunches -->
                 <li style="margin-bottom: 6px;">
                     <strong th:text="${#numbers.formatDecimal(recommendation.savings / 200, 0, 'COMMA', 0, 'POINT')}"></strong>
@@ -471,12 +463,12 @@
                     <span th:text="#{report.rec.apartment}">m² of Prague apartment (@ 160k CZK/m²) 🏠</span>
                 </li>
             </ul>
-            <p style="font-size: 12px; color: #888; margin: 12px 0 0 0; font-style: italic;" th:text="#{report.rec.smart}">
+            <p style="font-size: 12px; color: var(--text-muted); margin: 12px 0 0 0; font-style: italic;" th:text="#{report.rec.smart}">
                 Smart tax planning = more money for the things that matter! 💰
             </p>
         </div>
 
-        <h3 style="color: #060; margin-top: 20px; margin-bottom: 12px;">📊 <span th:text="#{report.incomeSummary.title}">Taxable Income Summary</span></h3>
+        <h3 style="color: var(--rec-heading); margin-top: 20px; margin-bottom: 12px;">📊 <span th:text="#{report.incomeSummary.title}">Taxable Income Summary</span></h3>
         <table style="font-size: 14px; width: auto;">
             <tr th:if="${processRsu}">
                 <td style="padding: 4px 16px 4px 0;" th:text="#{report.incomeSummary.rsu}">RSU taxable (daily / yearly):</td>
@@ -492,13 +484,13 @@
             </tr>
         </table>
 
-        <h3 style="color: #060; margin-top: 24px; margin-bottom: 12px;">💰 <span th:text="#{report.taxDue.title}">Estimated Tax Due</span></h3>
+        <h3 style="color: var(--rec-heading); margin-top: 24px; margin-bottom: 12px;">💰 <span th:text="#{report.taxDue.title}">Estimated Tax Due</span></h3>
         <table style="font-size: 14px; border-collapse: collapse;">
             <thead>
-                <tr style="background: #e0f0e0;">
-                    <th style="padding: 8px 16px; text-align: left; border: 1px solid #090;" th:text="#{report.taxDue.taxRate}">Tax Rate</th>
-                    <th style="padding: 8px 16px; text-align: right; border: 1px solid #090;" th:text="#{report.taxDue.dailyRates}">Daily Rates</th>
-                    <th style="padding: 8px 16px; text-align: right; border: 1px solid #090;" th:text="#{report.taxDue.yearlyAvg}">Yearly Average</th>
+                <tr style="background: var(--rec-bg);">
+                    <th style="padding: 8px 16px; text-align: left; border: 1px solid var(--rec-border);" th:text="#{report.taxDue.taxRate}">Tax Rate</th>
+                    <th style="padding: 8px 16px; text-align: right; border: 1px solid var(--rec-border);" th:text="#{report.taxDue.dailyRates}">Daily Rates</th>
+                    <th style="padding: 8px 16px; text-align: right; border: 1px solid var(--rec-border);" th:text="#{report.taxDue.yearlyAvg}">Yearly Average</th>
                 </tr>
             </thead>
             <tbody>
@@ -522,25 +514,25 @@
                 </tr>
             </tbody>
         </table>
-        <p style="font-size: 12px; color: #666; margin-top: 8px;" th:text="#{report.taxDue.note}">
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;" th:text="#{report.taxDue.note}">
             ℹ️ Progressive tax: 15% applies to income up to CZK 1,676,052; 23% applies to income above this threshold.
         </p>
 
-        <p style="font-size: 12px; color: #666; margin-top: 16px;" th:text="#{report.taxDue.disclaimer}">
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 16px;" th:text="#{report.taxDue.disclaimer}">
             ⚠️ This is for informational purposes only, not financial or tax advice.
             Consult a tax professional for your specific situation.
         </p>
     </div>
 
     <!-- Support Banner -->
-    <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; text-align: center;">
-        <h3 style="color: white; margin-top: 0;">☕ <span th:text="#{support.banner.title}">Did this save you time or money?</span></h3>
+    <div class="card" style="background: linear-gradient(135deg, var(--banner-bg-1) 0%, var(--banner-bg-2) 100%); border: none; color: var(--banner-text); text-align: center;">
+        <h3 style="color: var(--banner-text); margin-top: 0;">☕ <span th:text="#{support.banner.title}">Did this save you time or money?</span></h3>
         <p style="margin: 8px 0; opacity: 0.9;" th:text="#{support.banner.desc}">Consider buying me a coffee via my Revolut tag to support this project!</p>
-        <a href="https://revolut.me/los" target="_blank" style="font-size: 28px; font-weight: bold; background: white; color: #667eea; padding: 8px 28px; border-radius: 25px; display: inline-block; margin: 12px 0; text-decoration: none;">
+        <a href="https://revolut.me/los" target="_blank" style="font-size: 28px; font-weight: bold; background: var(--banner-text); color: var(--banner-bg-1); padding: 8px 28px; border-radius: 25px; display: inline-block; margin: 12px 0; text-decoration: none;">
             @los
         </a>
         <p style="margin: 8px 0; opacity: 0.9; font-size: 14px;">
-            <a href="https://revolut.me/los" target="_blank" style="color: white; font-weight: 600;">revolut.me/los</a>
+            <a href="https://revolut.me/los" target="_blank" style="color: var(--banner-text); font-weight: 600;">revolut.me/los</a>
             <span style="opacity: 0.7;">· @los is my <span th:text="#{support.banner.tag}">Revolut tag</span> · <span th:text="#{support.banner.appreciate}">Any amount appreciated</span> 💜</span>
         </p>
     </div>

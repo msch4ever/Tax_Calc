@@ -1,0 +1,248 @@
+:root {
+    --bg-color: #f5f5f5;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --text-heading: #333333;
+    --card-bg: #ffffff;
+    --card-shadow: rgba(0,0,0,0.1);
+    --border-color: #dddddd;
+    --input-bg: #ffffff;
+    --input-text: #000000;
+    
+    --btn-bg: #0066cc;
+    --btn-text: white;
+    --btn-hover: #0055aa;
+    --btn-disabled-bg: #cccccc;
+    --btn-disabled-text: #666666;
+    
+    --error-bg: #fee;
+    --error-border: #fcc;
+    --error-text: #c00;
+    
+    --info-bg: #f0f7ff;
+    --info-border: #cce;
+    --info-heading: #336;
+    
+    --link-color: #0066cc;
+    --flag-bg: #e8f4ff;
+    
+    /* Guide Specific */
+    --guide-example-bg: #f8f9fa;
+    --guide-example-border: #0066cc;
+    --guide-important-bg: #fff3cd;
+    --guide-important-border: #ffc107;
+    --guide-important-text: #856404;
+    
+    /* Results Specific */
+    --table-th-bg: #f8f8f8;
+    --table-border: #eee;
+    --table-total-bg: #f5f5f5;
+    --negative-color: #c00;
+    --positive-color: #090;
+    --exempt-color: #666;
+    --better-bg: #e6ffe6;
+    --log-bg: #1e1e1e;
+    --log-text: #d4d4d4;
+    --section-rsu-bg: #e8f4ff;
+    --section-rsu-border: #0066cc;
+    --section-espp-bg: #f0e8ff;
+    --section-espp-border: #6600cc;
+    --banner-bg-1: #667eea;
+    --banner-bg-2: #764ba2;
+    --banner-text: white;
+    
+    /* Recommendations */
+    --rec-bg: #f0fff0;
+    --rec-border: #090;
+    --rec-heading: #060;
+}
+
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-main: #e0e0e0;
+    --text-muted: #aaaaaa;
+    --text-heading: #ffffff;
+    --card-bg: #1e1e1e;
+    --card-shadow: rgba(0,0,0,0.5);
+    --border-color: #444444;
+    --input-bg: #2d2d2d;
+    --input-text: #ffffff;
+    
+    --btn-bg: #0055aa;
+    --btn-text: #ffffff;
+    --btn-hover: #004488;
+    --btn-disabled-bg: #444444;
+    --btn-disabled-text: #888888;
+    
+    --error-bg: #4a0000;
+    --error-border: #ff6666;
+    --error-text: #ffb3b3;
+    
+    --info-bg: #1e2a38;
+    --info-border: #334a66;
+    --info-heading: #88aaff;
+    
+    --link-color: #66b3ff;
+    --flag-bg: #2d3748;
+    
+    /* Guide Specific */
+    --guide-example-bg: #2d2d2d;
+    --guide-example-border: #66b3ff;
+    --guide-important-bg: #4c3d00;
+    --guide-important-border: #b28900;
+    --guide-important-text: #ffdf80;
+    
+    /* Results Specific */
+    --table-th-bg: #2d2d2d;
+    --table-border: #444;
+    --table-total-bg: #262626;
+    --negative-color: #ff6666;
+    --positive-color: #66cc66;
+    --exempt-color: #aaaaaa;
+    --better-bg: #2d5a36;
+    --log-bg: #000000;
+    --log-text: #00ff00;
+    --section-rsu-bg: #1e2a38;
+    --section-rsu-border: #66b3ff;
+    --section-espp-bg: #2a1e38;
+    --section-espp-border: #b366ff;
+    --banner-bg-1: #3b4b8a;
+    --banner-bg-2: #4a2e66;
+    --banner-text: #e0e0e0;
+    
+    /* Recommendations */
+    --rec-bg: #1b3320;
+    --rec-border: #339933;
+    --rec-heading: #66cc66;
+}
+
+body {
+    background: var(--bg-color) ;
+    color: var(--text-main) ;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Global Form & Card Overrides */
+h1, h2, h3 { color: var(--text-heading) ; }
+a { color: var(--link-color) ; }
+
+.card {
+    background: var(--card-bg) ;
+    box-shadow: 0 2px 4px var(--card-shadow) ;
+}
+
+input[type="file"], input[type="number"], input[type="text"] {
+    background: var(--input-bg) ;
+    color: var(--input-text) ;
+    border-color: var(--border-color) ;
+}
+
+label { color: var(--text-main) ; }
+.hint { color: var(--text-muted) ; }
+
+button {
+    background: var(--btn-bg) ;
+    color: var(--btn-text) ;
+}
+button:hover:not(:disabled) { background: var(--btn-hover) ; }
+button:disabled {
+    background: var(--btn-disabled-bg) ;
+    color: var(--btn-disabled-text) ;
+}
+
+.error {
+    background: var(--error-bg) ;
+    border-color: var(--error-border) ;
+    color: var(--error-text) ;
+}
+
+.info-box {
+    background: var(--info-bg) ;
+    border-color: var(--info-border) ;
+}
+.info-box h3 { color: var(--info-heading) ; }
+
+/* Guide Rules Overrides */
+.example {
+    background: var(--guide-example-bg) ;
+    border-left-color: var(--guide-example-border) ;
+}
+.important {
+    background: var(--guide-important-bg) ;
+    border-color: var(--guide-important-border) ;
+}
+.important strong { color: var(--guide-important-text) ; }
+
+/* Results Rules Overrides */
+table th { background: var(--table-th-bg) ; color: var(--text-main) ; }
+table th, table td { border-color: var(--table-border) ; color: var(--text-main) ; }
+.total-row { background: var(--table-total-bg) ; }
+.total-row td { font-weight: 600 ; color: var(--text-main) ; }
+.negative { color: var(--negative-color) ; }
+.positive { color: var(--positive-color) ; }
+.exempt { color: var(--exempt-color) ; }
+.better { background: var(--better-bg) ; }
+.log-box {
+    background: var(--log-bg) ;
+    color: var(--log-text) ;
+}
+.section-header {
+    background: var(--section-rsu-bg) ;
+    border-bottom-color: var(--section-rsu-border) ;
+}
+.section-header.espp {
+    background: var(--section-espp-bg) ;
+    border-bottom-color: var(--section-espp-border) ;
+}
+.empty-notice { color: var(--text-muted) ; }
+
+.theme-toggle {
+    background: var(--flag-bg) !important;
+    color: var(--link-color) !important;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+}
+
+.theme-text {
+    margin-right: 6px;
+}
+
+/* Icon and Text toggling */
+[data-theme="dark"] .light-icon { display: inline; }
+[data-theme="dark"] .dark-icon { display: none; }
+[data-theme="dark"] .light-text { display: inline; }
+[data-theme="dark"] .dark-text { display: none; }
+
+html:not([data-theme="dark"]) .light-icon { display: none; }
+html:not([data-theme="dark"]) .dark-icon { display: inline; }
+html:not([data-theme="dark"]) .light-text { display: none; }
+html:not([data-theme="dark"]) .dark-text { display: inline; }
+
+.lang-box {
+    text-align: right;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.lang-flag {
+    padding: 4px 8px; 
+    border-radius: 4px; 
+    background: var(--flag-bg) ; 
+    color: var(--link-color) ; 
+    font-weight: bold; 
+    margin-right: 8px;
+}
+.lang-flag:last-child {
+    margin-right: 0;
+}

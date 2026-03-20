@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Tax Calculator (RSU &amp; ESPP)</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <script th:src="@{/js/theme.js}"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-            background: #f5f5f5;
         }
-        h1 { color: #333; }
         .card {
-            background: white;
             border-radius: 8px;
             padding: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px var(--card-shadow);
             margin-bottom: 20px;
         }
         .form-group {
@@ -28,12 +27,10 @@
             display: block;
             font-weight: 600;
             margin-bottom: 6px;
-            color: #444;
         }
         input[type="file"], input[type="number"], input[type="text"] {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
             box-sizing: border-box;
@@ -41,12 +38,9 @@
         input[type="file"] { padding: 8px; }
         .hint {
             font-size: 12px;
-            color: #666;
             margin-top: 4px;
         }
         button {
-            background: #0066cc;
-            color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 4px;
@@ -54,27 +48,17 @@
             cursor: pointer;
             width: 100%;
         }
-        button:hover:not(:disabled) { background: #0055aa; }
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
         .error {
-            background: #fee;
-            border: 1px solid #fcc;
-            color: #c00;
             padding: 12px;
             border-radius: 4px;
             margin-bottom: 16px;
         }
         .info-box {
-            background: #f0f7ff;
-            border: 1px solid #cce;
             padding: 16px;
             border-radius: 4px;
             margin-top: 20px;
         }
-        .info-box h3 { margin-top: 0; color: #336; }
+        .info-box h3 { margin-top: 0; }
         .info-box ul { margin: 0; padding-left: 20px; }
         .checkbox-group {
             display: flex;
@@ -106,11 +90,17 @@
         <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> 💜</span>
     </div>
 
-    <div style="text-align: right; margin-bottom: 20px;">
-        <a href="?lang=en" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold; margin-right: 8px;">🇬🇧 EN</a>
-        <a href="?lang=cs" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold; margin-right: 8px;">🇨🇿 CZ</a>
-        <a href="?lang=ru" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold; margin-right: 8px;">🇺🇳 RU</a>
-        <a href="?lang=ua" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #e8f4ff; color: #0066cc; font-weight: bold;">🇺🇦 UA</a>
+    <div class="lang-box">
+        <a href="?lang=en" class="lang-flag">🇬🇧 EN</a>
+        <a href="?lang=cs" class="lang-flag">🇨🇿 CZ</a>
+        <a href="?lang=ua" class="lang-flag">🇺🇦 UA</a>
+        <a href="?lang=ru" class="lang-flag">🇺🇳 RU</a>
+        <button onclick="toggleTheme()" class="theme-toggle">
+            <span class="theme-text dark-text" th:text="#{nav.theme.toggle.dark}">Toggle Dark Mode</span>
+            <span class="theme-text light-text" th:text="#{nav.theme.toggle.light}">Toggle Light Mode</span>
+            <span class="light-icon">☀️</span>
+            <span class="dark-icon">🌙</span>
+        </button>
     </div>
 
     <h1>🇨🇿 <span th:text="#{app.title.cz}">Stock Tax Calculator</span></h1>
@@ -184,31 +174,31 @@
         <ul>
             <li><strong>Benefit History</strong> (BenefitHistory.xlsx):<br>
                 At Work → My Account → Benefit History → <em>Download Expanded</em><br>
-                <span style="color:#666">(Downloads Excel with "ESPP" and "Restricted Stock" sheets)</span></li>
+                <span style="color:var(--text-muted)">(Downloads Excel with "ESPP" and "Restricted Stock" sheets)</span></li>
             <li><strong>Gains &amp; Losses</strong> (G&amp;L_Expanded.xlsx):<br>
                 At Work → My Account → Gains &amp; Losses → Pick Year (e.g., 2025) → <em>Download Expanded</em><br>
-                <span style="color:#666">(Contains both RSU and ESPP sell transactions)</span></li>
+                <span style="color:var(--text-muted)">(Contains both RSU and ESPP sell transactions)</span></li>
         </ul>
-        <p style="margin-top: 12px; color: #060;">✅ Just upload the Excel files directly - no conversion needed!</p>
+        <p style="margin-top: 12px; color: var(--success-text);">✅ Just upload the Excel files directly - no conversion needed!</p>
     </div>
 
-    <div class="info-box" style="background: #fff8e6; border-color: #ffe0a0;">
+    <div class="info-box" style="background: var(--guide-bg); border-color: var(--guide-border);">
         <h3 th:text="#{info.guideTitle}">📄 Tax Guide</h3>
         <p style="margin: 0;">
-            <a href="/tax-guide" style="color: #0066cc; font-weight: 600;" th:text="#{info.guideLink}">
+            <a href="/tax-guide" style="color: var(--link-color); font-weight: 600;" th:text="#{info.guideLink}">
                 📖 View: Czech Tax Rules for RSU & ESPP Income
             </a>
         </p>
         <p class="hint" style="margin-top: 8px;" th:text="#{info.guideHint}">Learn how to properly report stock compensation in your Czech tax return with examples.</p>
     </div>
 
-    <div class="info-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; text-align: center;">
-        <h3 style="color: white; margin-top: 0;" th:text="#{support.boxTitle}">☕ Support This Project</h3>
+    <div class="info-box" style="background: linear-gradient(135deg, var(--banner-bg-1) 0%, var(--banner-bg-2) 100%); border: none; color: var(--banner-text); text-align: center;">
+        <h3 style="color: var(--banner-text); margin-top: 0;" th:text="#{support.boxTitle}">☕ Support This Project</h3>
         <p style="margin: 8px 0; opacity: 0.9;">If this tool saved you time or money, consider buying me a coffee via my Revolut tag!</p>
-        <a href="https://revolut.me/los" target="_blank" style="font-size: 24px; font-weight: bold; background: white; color: #667eea; padding: 6px 20px; border-radius: 20px; display: inline-block; margin: 8px 0; text-decoration: none;">
+        <a href="https://revolut.me/los" target="_blank" style="font-size: 24px; font-weight: bold; background: var(--banner-text); color: var(--banner-bg-1); padding: 6px 20px; border-radius: 20px; display: inline-block; margin: 8px 0; text-decoration: none;">
             @los
         </a>
-        <p style="margin: 8px 0; opacity: 0.8; font-size: 13px;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> · Any amount appreciated 💜</p>
+        <p style="margin: 8px 0; opacity: 0.8; font-size: 13px;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: var(--banner-text);">revolut.me/los</a> · Any amount appreciated 💜</p>
     </div>
 </body>
 </html>
