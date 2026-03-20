@@ -150,13 +150,14 @@ public class TaxCalculatorController {
         BigDecimal totalDiff = grandTotalDaily.subtract(grandTotalYearly);
 
         String betterRate = totalDiff.compareTo(BigDecimal.ZERO) > 0 ? "yearly" : "daily";
-        BigDecimal savings = totalDiff.abs();
+        BigDecimal taxableDifference = totalDiff.abs();
+        BigDecimal taxSavings = taxableDifference.multiply(new BigDecimal("0.23"));
 
         return new RateRecommendation(
                 rsuTotalDaily, rsuTotalYearly,
                 esppTotalDaily, esppTotalYearly,
                 grandTotalDaily, grandTotalYearly, totalDiff,
-                betterRate, savings
+                betterRate, taxableDifference, taxSavings
         );
     }
 
@@ -168,7 +169,7 @@ public class TaxCalculatorController {
             BigDecimal rsuTotalDaily, BigDecimal rsuTotalYearly,
             BigDecimal esppTotalDaily, BigDecimal esppTotalYearly,
             BigDecimal grandTotalDaily, BigDecimal grandTotalYearly, BigDecimal totalDiff,
-            String betterRate, BigDecimal savings
+            String betterRate, BigDecimal taxableDifference, BigDecimal taxSavings
     ) {}
 }
 

@@ -418,55 +418,8 @@
         <p style="font-size: 18px; margin: 16px 0;">
             <strong th:text="#{report.rec.use}">Use</strong>
             <strong><span th:text="${recommendation.betterRate == 'daily' ? #messages.msg('report.rec.daily') : #messages.msg('report.rec.yearly')}"></span></strong>
-            <span th:text="#{report.rec.toSave}">to save</span> <strong th:text="${#numbers.formatDecimal(recommendation.savings, 1, 'COMMA', 2, 'POINT')}"></strong> CZK
+            <span th:text="#{report.rec.toDecrease}">to decrease your taxable amount by</span> <strong th:text="${#numbers.formatDecimal(recommendation.taxableDifference, 1, 'COMMA', 2, 'POINT')}"></strong> CZK
         </p>
-
-        <!-- Fun Savings Equivalents -->
-        <div th:if="${recommendation.savings > 0}" style="background: var(--card-bg); border-radius: 8px; padding: 16px; margin: 16px 0; border: 1px solid var(--border-color);">
-            <p style="font-size: 14px; color: var(--text-main); margin: 0 0 12px 0;">
-                <strong>🎉 <span th:text="#{report.rec.enoughFor}">That's enough for:</span></strong>
-            </p>
-            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-muted);">
-                <!-- Always show lunches -->
-                <li style="margin-bottom: 6px;">
-                    <strong th:text="${#numbers.formatDecimal(recommendation.savings / 200, 0, 'COMMA', 0, 'POINT')}"></strong>
-                    <span th:text="#{report.rec.lunches}">lunches in Karlín 🍽️ (@ 200 CZK each)</span>
-                </li>
-
-                <!-- < 10k CZK -->
-                <li th:if="${recommendation.savings < 10000}" style="margin-bottom: 6px;" th:text="#{report.rec.fancyDinner}">
-                    A fancy dinner for two at Lokál 🍺
-                </li>
-
-                <!-- 10k - 25k CZK -->
-                <li th:if="${recommendation.savings >= 10000 and recommendation.savings < 25000}" style="margin-bottom: 6px;" th:text="#{report.rec.weekendTrip}">
-                    Weekend trip to Vienna or Budapest 🚂
-                </li>
-
-                <!-- 25k - 100k CZK -->
-                <li th:if="${recommendation.savings >= 25000 and recommendation.savings < 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.croatia}">
-                    A week-long vacation in Croatia ⛱️
-                </li>
-                <li th:if="${recommendation.savings >= 25000 and recommendation.savings < 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.macbook}">
-                    New MacBook Air (or half of a Pro) 💻
-                </li>
-
-                <!-- >= 100k CZK -->
-                <li th:if="${recommendation.savings >= 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.thailand}">
-                    Two weeks in Thailand with flights 🏝️
-                </li>
-                <li th:if="${recommendation.savings >= 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.car}">
-                    A decent used car (or down payment on a new one) 🚗
-                </li>
-                <li th:if="${recommendation.savings >= 100000}" style="margin-bottom: 6px;">
-                    <strong th:text="${#numbers.formatDecimal(recommendation.savings / 160000, 1, 'COMMA', 1, 'POINT')}"></strong>
-                    <span th:text="#{report.rec.apartment}">m² of Prague apartment (@ 160k CZK/m²) 🏠</span>
-                </li>
-            </ul>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 12px 0 0 0; font-style: italic;" th:text="#{report.rec.smart}">
-                Smart tax planning = more money for the things that matter! 💰
-            </p>
-        </div>
 
         <h3 style="color: var(--rec-heading); margin-top: 20px; margin-bottom: 12px;">📊 <span th:text="#{report.incomeSummary.title}">Taxable Income Summary</span></h3>
         <table style="font-size: 14px; width: auto;">
@@ -522,6 +475,60 @@
             ⚠️ This is for informational purposes only, not financial or tax advice.
             Consult a tax professional for your specific situation.
         </p>
+
+        <p style="font-size: 18px; margin: 24px 0 16px 0;">
+            <span th:text="#{report.rec.savingStart}">According to our calculations you are saving</span>
+            <strong th:text="${#numbers.formatDecimal(recommendation.taxSavings, 1, 'COMMA', 2, 'POINT')}"></strong> CZK
+            <span th:text="#{report.rec.savingEnd}">using</span>
+            <strong><span th:text="${recommendation.betterRate == 'daily' ? #messages.msg('report.rec.daily') : #messages.msg('report.rec.yearly')}"></span></strong>!
+        </p>
+
+        <!-- Fun Savings Equivalents -->
+        <div th:if="${recommendation.taxSavings > 0}" style="background: var(--card-bg); border-radius: 8px; padding: 16px; margin: 0 0 20px 0; border: 1px solid var(--border-color);">
+            <p style="font-size: 14px; color: var(--text-main); margin: 0 0 12px 0;">
+                <strong>🎉 <span th:text="#{report.rec.enoughFor}">That's enough for:</span></strong>
+            </p>
+            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-muted);">
+                <!-- Always show lunches -->
+                <li style="margin-bottom: 6px;">
+                    <strong th:text="${#numbers.formatDecimal(recommendation.taxSavings / 200, 0, 'COMMA', 0, 'POINT')}"></strong>
+                    <span th:text="#{report.rec.lunches}">lunches in Karlín 🍽️ (@ 200 CZK each)</span>
+                </li>
+
+                <!-- < 10k CZK -->
+                <li th:if="${recommendation.taxSavings < 10000}" style="margin-bottom: 6px;" th:text="#{report.rec.fancyDinner}">
+                    A fancy dinner for two at Lokál 🍺
+                </li>
+
+                <!-- 10k - 25k CZK -->
+                <li th:if="${recommendation.taxSavings >= 10000 and recommendation.taxSavings < 25000}" style="margin-bottom: 6px;" th:text="#{report.rec.weekendTrip}">
+                    Weekend trip to Vienna or Budapest 🚂
+                </li>
+
+                <!-- 25k - 100k CZK -->
+                <li th:if="${recommendation.taxSavings >= 25000 and recommendation.taxSavings < 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.croatia}">
+                    A week-long vacation in Croatia ⛱️
+                </li>
+                <li th:if="${recommendation.taxSavings >= 25000 and recommendation.taxSavings < 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.macbook}">
+                    New MacBook Air (or half of a Pro) 💻
+                </li>
+
+                <!-- >= 100k CZK -->
+                <li th:if="${recommendation.taxSavings >= 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.thailand}">
+                    Two weeks in Thailand with flights 🏝️
+                </li>
+                <li th:if="${recommendation.taxSavings >= 100000}" style="margin-bottom: 6px;" th:text="#{report.rec.car}">
+                    A decent used car (or down payment on a new one) 🚗
+                </li>
+                <li th:if="${recommendation.taxSavings >= 100000}" style="margin-bottom: 6px;">
+                    <strong th:text="${#numbers.formatDecimal(recommendation.taxSavings / 160000, 1, 'COMMA', 1, 'POINT')}"></strong>
+                    <span th:text="#{report.rec.apartment}">m² of Prague apartment (@ 160k CZK/m²) 🏠</span>
+                </li>
+            </ul>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 12px 0 0 0; font-style: italic;" th:text="#{report.rec.smart}">
+                Smart tax planning = more money for the things that matter! 💰
+            </p>
+        </div>
     </div>
 
     <!-- Support Banner -->
