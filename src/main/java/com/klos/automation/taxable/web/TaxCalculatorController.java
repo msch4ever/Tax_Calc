@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -200,6 +201,10 @@ public class TaxCalculatorController {
         BigDecimal rsuGainsYearly = maxZero(result.rsuSellReport().totalTaxableCapitalGainCzkByYearlyAvg());
         BigDecimal rsuTotalDaily = rsuIncomeDaily.add(rsuGainsDaily);
         BigDecimal rsuTotalYearly = rsuIncomeYearly.add(rsuGainsYearly);
+        BigDecimal rsuSellCostsDaily = result.rsuSellReport().totalPurchaseCostCzkByDate();
+        BigDecimal rsuSellCostsYearly = result.rsuSellReport().totalVestIncomeCzkByYearlyAvg();
+        BigDecimal rsuSellProceedsDaily = result.rsuSellReport().totalSaleProceedsCzkByDate();
+        BigDecimal rsuSellProceedsYearly = result.rsuSellReport().totalSaleProceedsCzkByYearlyAvg();
 
         // ESPP totals
         BigDecimal esppIncomeDaily = result.esppPurchaseReport().totalDiscountBenefitCzkByDate();
@@ -208,6 +213,20 @@ public class TaxCalculatorController {
         BigDecimal esppGainsYearly = maxZero(result.esppSellReport().totalTaxableCapitalGainCzkByYearlyAvg());
         BigDecimal esppTotalDaily = esppIncomeDaily.add(esppGainsDaily);
         BigDecimal esppTotalYearly = esppIncomeYearly.add(esppGainsYearly);
+        BigDecimal esppSellCostsDaily = result.esppSellReport().totalPurchaseCostCzkByDate();
+        BigDecimal esppSellCostsYearly = result.esppSellReport().totalVestIncomeCzkByYearlyAvg();
+        BigDecimal esppSellProceedsDaily = result.esppSellReport().totalSaleProceedsCzkByDate();
+        BigDecimal esppSellProceedsYearly = result.esppSellReport().totalSaleProceedsCzkByYearlyAvg();
+
+        // Tax summary totals
+        BigDecimal vestTotalDaily = rsuIncomeDaily.add(esppIncomeDaily).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal vestTotalYearly = rsuIncomeYearly.add(esppIncomeYearly).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal sellTotalProceedsDaily = rsuSellProceedsDaily.add(esppSellProceedsDaily).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal sellTotalProceedsYearly = rsuSellProceedsYearly.add(esppSellProceedsYearly).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal sellTotalCostsDaily = rsuSellCostsDaily.add(esppSellCostsDaily).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal sellTotalCostsYearly = rsuSellCostsYearly.add(esppSellCostsYearly).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal totalGainsLossesDaily = sellTotalProceedsDaily.subtract(sellTotalCostsDaily).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal totalGainsLossesYearly = sellTotalProceedsYearly.subtract(sellTotalCostsYearly).setScale(0, RoundingMode.HALF_UP);
 
         // Grand totals
         BigDecimal grandTotalDaily = rsuTotalDaily.add(esppTotalDaily);
@@ -221,6 +240,10 @@ public class TaxCalculatorController {
         return new RateRecommendation(
                 rsuTotalDaily, rsuTotalYearly,
                 esppTotalDaily, esppTotalYearly,
+                vestTotalDaily, vestTotalYearly,
+                sellTotalProceedsDaily, sellTotalProceedsYearly,
+                sellTotalCostsDaily, sellTotalCostsYearly,
+                totalGainsLossesDaily, totalGainsLossesYearly,
                 grandTotalDaily, grandTotalYearly, totalDiff,
                 betterRate, taxableDifference, taxSavings
         );
@@ -233,6 +256,10 @@ public class TaxCalculatorController {
     public record RateRecommendation(
             BigDecimal rsuTotalDaily, BigDecimal rsuTotalYearly,
             BigDecimal esppTotalDaily, BigDecimal esppTotalYearly,
+            BigDecimal vestTotalDaily, BigDecimal vestTotalYearly,
+            BigDecimal sellTotalProceedsDaily, BigDecimal sellTotalProceedsYearly,
+            BigDecimal sellTotalCostsDaily, BigDecimal sellTotalCostsYearly,
+            BigDecimal totalGainsLossesDaily, BigDecimal totalGainsLossesYearly,
             BigDecimal grandTotalDaily, BigDecimal grandTotalYearly, BigDecimal totalDiff,
             String betterRate, BigDecimal taxableDifference, BigDecimal taxSavings
     ) {}
