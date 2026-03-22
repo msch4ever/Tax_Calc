@@ -1,6 +1,6 @@
 # 🧮 Czech Stock Tax Calculator
 
-A **local, privacy-focused** web application for calculating Czech tax liability on RSU (Restricted Stock Units) and ESPP (Employee Stock Purchase Plan) compensation from E-Trade exports.
+A **local, privacy-focused** web application for calculating Czech tax liability on RSU (Restricted Stock Units) and ESPP (Employee Stock Purchase Plan) compensation from **E-Trade** and **Fidelity NetBenefits** exports.
 
 **🔒 Privacy First:** All data is processed locally on your machine. No uploads to external servers, no storage, no tracking.
 
@@ -13,6 +13,7 @@ A **local, privacy-focused** web application for calculating Czech tax liability
 
 - [Philosophy](#-philosophy)
 - [Features](#-features)
+- [Roadmap](#-roadmap)
 - [Quick Start](#-quick-start)
 - [How It Works](#-how-it-works)
 - [Architecture](#-architecture)
@@ -20,7 +21,6 @@ A **local, privacy-focused** web application for calculating Czech tax liability
 - [Project Structure](#-project-structure)
 - [Development](#-development)
 - [Contributing](#-contributing)
-- [Future Work](#-future-work)
 
 ## 🎯 Philosophy
 
@@ -41,13 +41,17 @@ This is a **personal, local-first tool** designed with privacy and simplicity in
 - ❌ Not a production-grade enterprise application
 
 ### Why Local?
-You control what data you upload. Your financial information never leaves your computer. Run it locally via Docker or Gradle, process your E-Trade exports, and get your tax calculations - all without sending sensitive data anywhere.
+You control what data you upload. Your financial information never leaves your computer. Run it locally via Docker or Gradle, process your E-Trade or Fidelity exports, and get your tax calculations - all without sending sensitive data anywhere.
 
 ## ✨ Features
 
+### Supported Brokers
+- ✅ **E-Trade** - Full support (RSU + ESPP) via Excel exports
+- ✅ **Fidelity NetBenefits** - RSU support via PDF "Custom Transaction Summary"
+
 ### Tax Calculations
 - ✅ **RSU Vesting Income** - Employment income from vested shares
-- ✅ **ESPP Purchase Discount** - 15% discount benefit as employment income
+- ✅ **ESPP Purchase Discount** - 15% discount benefit as employment income (E-Trade)
 - ✅ **Capital Gains/Losses** - Profit/loss from selling shares (RSU & ESPP)
 - ✅ **3-Year Holding Exemption** - Automatic detection of tax-exempt sales
 - ✅ **CZK 100k Exemption** - Total proceeds threshold check
@@ -60,17 +64,50 @@ You control what data you upload. Your financial information never leaves your c
 - ✅ **Tax Optimization** - Recommends which rate method saves more money
 
 ### Internationalization (i18n)
-- ✅ **Multi-Language Support** - Available in English (EN), Czech (CZ), Russian (RU), and Ukrainian (UA)
-- ✅ **URL-Based Switching** - Change language dynamically using the toggle or `?lang=XX` URL parameters
-- ✅ **Easy to Expand** - Easily add new languages via standard Spring Boot resource bundles (`messages_XX.properties`)
+- ✅ **Multi-Language Support** - English (EN), Czech (CZ), Russian (RU), Ukrainian (UA)
+- ✅ **URL-Based Switching** - Change language dynamically via toggle or `?lang=XX`
 
 ### User Experience
-- ✅ **Web Interface** - Simple file upload form
-- ✅ **Excel Support** - Direct upload of E-Trade .xlsx files
-- ✅ **Multi-Year Data** - Handles unfiltered exports spanning multiple years
-- ✅ **Detailed Reports** - Breakdown by transaction with totals
+- ✅ **Broker Selection** - Landing page to choose between E-Trade and Fidelity
+- ✅ **Excel + PDF Support** - E-Trade .xlsx files and Fidelity PDF reports
+- ✅ **Dark/Light Mode** - Theme toggle with persistent preference
+- ✅ **Detailed Reports** - Per-transaction breakdown with totals and recommendations
 - ✅ **Tax Guide** - Built-in Czech tax rules documentation
-- ✅ **Support Banners** - Revolut donation links (@los)
+- ✅ **Fun Savings** - See what your tax savings can buy (lunches, trips, apartments)
+
+## 🗺️ Roadmap
+
+### 🔴 Priority 1 — High Impact
+
+| # | Feature | Why It Matters |
+|---|---------|----------------|
+| 1 | **📄 Tax-Attachable PDF Report** | Generate a professional PDF attachable to your DPFO so Finanční úřad sees exactly how you calculated |
+| 2 | **🔢 POSP Employment Income Input** | Enter income & taxes from your employer's POSP form to get exact 15%/23% progressive tax calculation instead of guessing |
+| 3 | **👁️ Rate Display Toggle** | Choose to show daily, yearly, or both rate columns — declutters tables when you've already decided which to use |
+
+### 🟡 Priority 2 — Valuable Additions
+
+| # | Feature | Why It Matters |
+|---|---------|----------------|
+| 4 | **💸 Transaction Costs Support** | Include broker fees as deductible expenses in capital gains — makes the calculation more accurate |
+| 5 | **🏦 Fidelity ESPP Support** | Extend Fidelity from RSU-only to full ESPP parity — blocked until we have real-world Fidelity ESPP data |
+| 6 | **📊 Improved Calculation Log** | Upgrade raw console output to a structured, color-coded, collapsible detail view — easier to audit and debug |
+
+### 🟢 Priority 3 — Nice to Have
+
+| # | Feature | Why It Matters |
+|---|---------|----------------|
+| 7 | **🧪 Test Data Generator** | Generate sample E-Trade/Fidelity files for testing — makes it easier for contributors to develop and test without real data |
+
+### ❌ Out of Scope
+
+These will **not** be implemented — they contradict the local-first, privacy-first philosophy:
+
+- ❌ Historical Data Storage — no databases, no persistence
+- ❌ Tax Form Pre-Fill — no integration with external systems
+- ❌ API Endpoint — no programmatic access
+- ❌ Mobile-Responsive UI — desktop tool
+- ❌ Email Reports / Caching / Telemetry — not needed for local use
 
 ## 🚀 Quick Start
 
@@ -106,26 +143,21 @@ docker-compose up
 
 ## 📊 How It Works
 
-### 1. Export from E-Trade
+### 1. Export from Your Broker
 
-**Benefit History** (BenefitHistory.xlsx):
-```
-At Work → My Account → Benefit History → Download Expanded
-```
-Downloads Excel with two sheets: "ESPP" and "Restricted Stock"
+**E-Trade** — Export two Excel files:
+- **Benefit History** (BenefitHistory.xlsx): `At Work → My Account → Benefit History → Download Expanded`
+- **Gains & Losses** (GainsLosses.xlsx): `At Work → My Account → Gains & Losses → Pick Year → Download Expanded`
 
-**Gains & Losses** (GainsLosses.xlsx):
-```
-At Work → My Account → Gains & Losses → Pick Year → Download Expanded
-```
-Contains both RSU and ESPP sell transactions
+**Fidelity NetBenefits** — Export one PDF:
+- **Custom Transaction Summary**: `Activity & Orders → History → Custom Transaction Summary → Download PDF`
 
 ### 2. Upload to Calculator
 
 1. Open http://localhost:8080
-2. Upload both Excel files
-3. Select tax year (e.g., 2025)
-4. Choose plan types (RSU, ESPP, or both)
+2. Choose your broker (E-Trade or Fidelity)
+3. Upload your files
+4. Select tax year (e.g., 2025)
 5. Click "Calculate"
 
 ### 3. Review Results
@@ -163,8 +195,8 @@ The application follows clean architecture with clear separation of concerns:
 │                │  │             │  │                 │
 │ - Excel→CSV    │  │ - Vesting   │  │ - CNB API       │
 │ - CSV→Model    │  │ - ESPP      │  │ - GFŘ Rates     │
-│                │  │ - Capital   │  │ - Combined      │
-│                │  │   Gains     │  │                 │
+│ - PDF→Model    │  │ - Capital   │  │ - Combined      │
+│   (Fidelity)   │  │   Gains     │  │                 │
 └────────────────┘  └─────────────┘  └─────────────────┘
 ```
 
@@ -178,6 +210,7 @@ The application follows clean architecture with clear separation of concerns:
 - **RestrictedStockCsvParser** - Parses RSU vesting events from Benefit History
 - **EsppPurchaseParser** - Parses ESPP purchase events from Benefit History
 - **GainsLossesCsvParser** - Parses sell transactions from Gains & Losses
+- **FidelityPdfParser** - Extracts RSU stock sale data from Fidelity PDF using Apache PDFBox
 
 #### 2. Calculators
 - **VestingCalculator** - Calculates RSU vesting income (employment income)
@@ -192,8 +225,9 @@ The application follows clean architecture with clear separation of concerns:
 
 #### 4. Web Layer
 - **TaxCalculatorController** - Handles file uploads and form submissions
-- **TaxCalculationService** - Orchestrates parsing, calculation, and reporting
-- **Thymeleaf Templates** - index.html (upload form), results.html (reports), tax-guide.html (documentation)
+- **TaxCalculationService** - Orchestrates E-Trade parsing, calculation, and reporting
+- **FidelityCalculationService** - Orchestrates Fidelity PDF parsing, vesting derivation, and reporting
+- **Thymeleaf Templates** - Landing page, E-Trade/Fidelity forms, results pages, tax guide
 
 ## 🛠️ Technologies
 
@@ -204,6 +238,7 @@ The application follows clean architecture with clear separation of concerns:
 
 ### Libraries
 - **Apache POI 5.2.5** - Excel file parsing (XLSX)
+- **Apache PDFBox 3.0.4** - PDF parsing (Fidelity)
 - **OpenCSV 5.9** - CSV parsing and writing
 - **Thymeleaf** - Server-side HTML templating
 - **Gson 2.11.0** - JSON parsing for CNB API responses
@@ -395,28 +430,12 @@ Add ESPP purchase discount calculation
 - Update web UI to show ESPP income
 ```
 
-## 🚧 Future Work
+## 🚧 Changelog — Recently Completed
 
-### In Scope (Aligned with Local-First Philosophy)
-- [ ] **PDF/Print-Friendly Reports** - Export results as PDF for tax filing
-- [ ] **Transaction Costs Support** - Include broker fees in capital gains
-- [ ] **Multi-Currency Support** - Handle EUR, GBP in addition to USD
-- [ ] **Batch Processing** - Process multiple years at once
-- [ ] **Test Data Generator** - Create sample Excel files for testing
-- [ ] **Dark Mode** - UI theme toggle
+- [x] **Fidelity NetBenefits Support** - RSU vesting income + capital gains from PDF exports
+- [x] **Broker Selection Landing Page** - Choose between E-Trade and Fidelity at `/`
+- [x] **Dark/Light Mode** - Theme toggle with persistent preference
 - [x] **Localization** - English, Czech, Russian, and Ukrainian language support
-
-### Out of Scope (Against Local-First Philosophy)
-These features will **NOT** be implemented as they contradict the tool's privacy-first, local-only design:
-- ❌ **Historical Data Storage** - No databases, no persistence
-- ❌ **Tax Form Pre-Fill** - No integration with external systems
-- ❌ **API Endpoint** - No programmatic access, local use only
-- ❌ **Mobile-Responsive UI** - Desktop tool, not a mobile app
-- ❌ **Email Reports** - No external communication
-- ❌ **Caching** - Stateless, one-shot calculations
-- ❌ **Rate Limiting** - Not needed for local use
-- ❌ **Logging/Metrics** - No telemetry, no tracking
-- ❌ **Health Checks** - Not a production service
 
 ## 📄 License
 
