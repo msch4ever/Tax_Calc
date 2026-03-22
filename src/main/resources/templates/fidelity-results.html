@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Tax Report</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <title>Fidelity - Stock Tax Report</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#x1F4B0;</text></svg>">
     <link rel="stylesheet" th:href="@{/css/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <style>
@@ -39,7 +39,7 @@
         th, td {
             padding: 6px 8px;
             text-align: right;
-            border-bottom: 1px solid transparent; /* Managed by var(--table-border) via theme.css */
+            border-bottom: 1px solid transparent;
         }
         th {
             font-weight: 600;
@@ -64,33 +64,45 @@
             padding: 20px;
             text-align: center;
         }
+        .limited-banner {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
     <div class="support-banner" style="background: linear-gradient(135deg, var(--banner-bg-1) 0%, var(--banner-bg-2) 100%); color: var(--banner-text); padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-        <span>☕ <strong>Found this useful?</strong> Buy me a coffee via my Revolut tag!</span>
+        <span>&#9749; <strong>Found this useful?</strong> Buy me a coffee via my Revolut tag!</span>
         <a href="https://revolut.me/los" target="_blank" style="background: var(--banner-text); color: var(--banner-bg-1); padding: 4px 16px; border-radius: 15px; font-weight: bold; text-decoration: none;">@los</a>
-        <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: var(--banner-text);">revolut.me/los</a> 💜</span>
+        <span style="font-size: 12px; opacity: 0.8;">Revolut tag - <a href="https://revolut.me/los" target="_blank" style="color: var(--banner-text);">revolut.me/los</a> &#x1F49C;</span>
     </div>
 
     <div class="lang-box">
-        <a href="?lang=en" class="lang-flag">🇬🇧 EN</a>
-        <a href="?lang=cs" class="lang-flag">🇨🇿 CZ</a>
-        <a href="?lang=ua" class="lang-flag">🇺🇦 UA</a>
-        <a href="?lang=ru" class="lang-flag">🇺🇳 RU</a>
+        <a href="?lang=en" class="lang-flag">&#x1F1EC;&#x1F1E7; EN</a>
+        <a href="?lang=cs" class="lang-flag">&#x1F1E8;&#x1F1FF; CZ</a>
+        <a href="?lang=ua" class="lang-flag">&#x1F1FA;&#x1F1E6; UA</a>
+        <a href="?lang=ru" class="lang-flag">&#x1F1FA;&#x1F1F3; RU</a>
         <button onclick="toggleTheme()" class="theme-toggle">
             <span class="theme-text dark-text" th:text="#{nav.theme.toggle.dark}">Toggle Dark Mode</span>
             <span class="theme-text light-text" th:text="#{nav.theme.toggle.light}">Toggle Light Mode</span>
-            <span class="light-icon">💡</span>
-            <span class="dark-icon">🌙</span>
+            <span class="light-icon">&#9728;&#65039;</span>
+            <span class="dark-icon">&#x1F319;</span>
         </button>
     </div>
 
+    <div class="limited-banner">
+        <strong>&#x1F3E6; Fidelity</strong> &#8212; Vesting income derived from stock sale data (Cost Basis = FMV at Vest x Qty)
+    </div>
+
     <div class="header">
-        <h1>🇨🇿 <span th:text="#{app.title.report}">Stock Tax Report</span> - <span th:text="${taxYear}"></span></h1>
+        <h1>&#x1F3E6; Fidelity &#8212; <span th:text="#{app.title.report}">Stock Tax Report</span> - <span th:text="${taxYear}"></span></h1>
         <div>
-            <a href="/tax-guide" style="margin-right: 20px; color: var(--link-color);">📖 <span th:text="#{nav.guide}">Tax Guide</span></a>
-            <a href="/etrade" class="back-link">← <span th:text="#{nav.calculate.again}">Calculate Again</span></a>
+            <a href="/tax-guide" style="margin-right: 20px; color: var(--link-color);">&#x1F4D6; <span th:text="#{nav.guide}">Tax Guide</span></a>
+            <a href="/fidelity" class="back-link">&#8592; <span th:text="#{nav.calculate.again}">Calculate Again</span></a>
         </div>
     </div>
 
@@ -106,22 +118,18 @@
                     <td th:text="${entry.key}"></td>
                     <td th:text="${#numbers.formatDecimal(entry.value, 1, 3)}"></td>
                 </tr>
-                <tr class="total-row" th:if="${rsuVestingReport.vestEvents.size() > 0}">
+                <tr class="total-row" th:if="${rsuSellReport.transactions.size() > 0}">
                     <td th:text="#{report.rates.yearlyAvg}">Yearly Average</td>
-                    <td th:text="${#numbers.formatDecimal(rsuVestingReport.vestEvents[0].yearlyAvgRate, 1, 3)}"></td>
-                </tr>
-                <tr class="total-row" th:if="${rsuVestingReport.vestEvents.size() == 0 and esppPurchaseReport.purchases.size() > 0}">
-                    <td th:text="#{report.rates.yearlyAvg}">Yearly Average</td>
-                    <td th:text="${#numbers.formatDecimal(esppPurchaseReport.purchases[0].yearlyAvgRate, 1, 3)}"></td>
+                    <td th:text="${#numbers.formatDecimal(rsuSellReport.transactions[0].yearlyAvgRate, 1, 3)}"></td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- ==================== RSU SECTION ==================== -->
-    <div class="card" th:if="${processRsu}">
+    <!-- ==================== RSU SECTION (single card) ==================== -->
+    <div class="card">
         <div class="section-header">
-            <h2>📊 <span th:text="#{report.rsu.title}">RSU (Restricted Stock Units)</span></h2>
+            <h2>&#x1F4CA; <span th:text="#{report.rsu.title}">RSU (Restricted Stock Units)</span></h2>
         </div>
 
         <!-- RSU Vesting Income -->
@@ -199,20 +207,20 @@
                     <td th:text="${t.vestDate}"></td>
                     <td th:text="${t.quantity}"></td>
                     <td th:text="${'$' + #numbers.formatDecimal(t.vestPricePerShare, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.vestPricePerShare * t.quantity, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.vestPricePerShare * t.quantity * t.vestDateRate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.vestPricePerShare * t.quantity * t.yearlyAvgRate, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(t.vestIncomeUsd, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(t.vestIncomeCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(t.vestIncomeCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
                     <td th:text="${t.sellDate}"></td>
                     <td th:text="${'$' + #numbers.formatDecimal(t.sellPricePerShare, 1, 'COMMA', 2, 'POINT')}"></td>
                     <td th:text="${#numbers.formatDecimal(t.sellProceedsUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.sellProceedsUsd * t.sellDateRate, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(t.sellProceedsCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
                     <td th:text="${#numbers.formatDecimal(t.sellProceedsUsd * t.yearlyAvgRate, 1, 'COMMA', 2, 'POINT')}"></td>
                     <td th:text="${(t.holdingPeriod.years > 0 ? t.holdingPeriod.years + 'y ' : '') + (t.holdingPeriod.months > 0 ? t.holdingPeriod.months + 'm ' : '') + t.holdingPeriod.days + 'd'}"></td>
-                    <td th:class="${t.capitalGainLossUsd.signum() < 0 ? 'negative' : ''}"
+                    <td th:class="${t.capitalGainLossUsd.signum() &lt; 0 ? 'negative' : ''}"
                         th:text="${#numbers.formatDecimal(t.capitalGainLossUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:class="${t.capitalGainLossCzkByDate.signum() < 0 ? 'negative' : ''}"
+                    <td th:class="${t.capitalGainLossCzkByDate.signum() &lt; 0 ? 'negative' : ''}"
                         th:text="${#numbers.formatDecimal(t.capitalGainLossCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:class="${t.capitalGainLossCzkByYearlyAvg.signum() < 0 ? 'negative' : ''}"
+                    <td th:class="${t.capitalGainLossCzkByYearlyAvg.signum() &lt; 0 ? 'negative' : ''}"
                         th:text="${#numbers.formatDecimal(t.capitalGainLossCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
                     <td th:text="${t.capitalGainsExempt} ? #{report.table.yes} : #{report.table.no}"
                         th:class="${t.capitalGainsExempt ? 'exempt' : ''}"></td>
@@ -243,161 +251,25 @@
         </table>
     </div>
 
-    <!-- ==================== ESPP SECTION ==================== -->
-    <div class="card" th:if="${processEspp}">
-        <div class="section-header espp">
-            <h2>🛒 <span th:text="#{report.espp.title}">ESPP (Employee Stock Purchase Plan)</span></h2>
-        </div>
-
-        <!-- ESPP Purchase Discount Income -->
-        <h3 th:text="#{report.espp.discount.title}">Purchase Discount Income (Taxable as Ordinary Income)</h3>
-        <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;" th:text="#{report.espp.discount.desc}">
-            The 15% employer discount is taxable income at the time of purchase.
-        </p>
-        <div th:if="${esppPurchaseReport.purchases.size() == 0}" class="empty-notice" th:text="#{report.empty.esppPurchases}">
-            No ESPP purchase events found for this tax year.
-        </div>
-        <table th:if="${esppPurchaseReport.purchases.size() > 0}">
-            <thead>
-                <tr>
-                    <th th:text="#{report.table.grant}">Grant</th>
-                    <th th:text="#{report.table.date}">Date</th>
-                    <th th:text="#{report.table.shares}">Shares</th>
-                    <th>Cost/sh</th>
-                    <th th:text="#{report.table.fmvPerSh}">FMV/sh</th>
-                    <th>Discount $</th>
-                    <th th:text="#{report.rates.rate}">Rate</th>
-                    <th>Discount CZK (daily)</th>
-                    <th>Discount CZK (yearly)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="p : ${esppPurchaseReport.purchases}">
-                    <td th:text="${p.grantNumber}"></td>
-                    <td th:text="${p.purchaseDate}"></td>
-                    <td th:text="${p.quantity}"></td>
-                    <td th:text="${'$' + #numbers.formatDecimal(p.purchasePrice, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${'$' + #numbers.formatDecimal(p.purchaseDateFmv, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(p.discountBenefitUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(p.purchaseDateRate, 1, 3)}"></td>
-                    <td th:text="${#numbers.formatDecimal(p.discountBenefitCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(p.discountBenefitCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
-                </tr>
-                <tr class="total-row">
-                    <td>TOTAL</td>
-                    <td></td>
-                    <td th:text="${esppPurchaseReport.totalShares}"></td>
-                    <td></td>
-                    <td></td>
-                    <td th:text="${#numbers.formatDecimal(esppPurchaseReport.totalDiscountBenefitUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td></td>
-                    <td th:text="${#numbers.formatDecimal(esppPurchaseReport.totalDiscountBenefitCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppPurchaseReport.totalDiscountBenefitCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- ESPP Capital Gains/Losses -->
-        <h3 style="margin-top: 30px;">Capital Gains/Losses (From Selling ESPP)</h3>
-        <div th:if="${esppSellReport.transactions.size() == 0}" class="empty-notice">
-            No ESPP sell transactions found for this tax year.
-        </div>
-        <table th:if="${esppSellReport.transactions.size() > 0}">
-            <thead>
-                <tr>
-                    <th>Grant</th>
-                    <th>Acquired</th>
-                    <th>Qty</th>
-                    <th>FMV/sh</th>
-                    <th>Cost $</th>
-                    <th>Cost CZK (D)</th>
-                    <th>Cost CZK (Y)</th>
-                    <th>Sold</th>
-                    <th>Price/sh</th>
-                    <th>Proceeds $</th>
-                    <th>Proceeds CZK (D)</th>
-                    <th>Proceeds CZK (Y)</th>
-                    <th>Held</th>
-                    <th>Gain $</th>
-                    <th>Gain CZK (D)</th>
-                    <th>Gain CZK (Y)</th>
-                    <th>Exempt</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="t : ${esppSellReport.transactions}">
-                    <td th:text="${t.grantNumber}"></td>
-                    <td th:text="${t.vestDate}"></td>
-                    <td th:text="${t.quantity}"></td>
-                    <td th:text="${'$' + #numbers.formatDecimal(t.vestPricePerShare, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.vestPricePerShare * t.quantity, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.vestPricePerShare * t.quantity * t.vestDateRate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.vestPricePerShare * t.quantity * t.yearlyAvgRate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${t.sellDate}"></td>
-                    <td th:text="${'$' + #numbers.formatDecimal(t.sellPricePerShare, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.sellProceedsUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.sellProceedsUsd * t.sellDateRate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(t.sellProceedsUsd * t.yearlyAvgRate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${(t.holdingPeriod.years > 0 ? t.holdingPeriod.years + 'y ' : '') + (t.holdingPeriod.months > 0 ? t.holdingPeriod.months + 'm ' : '') + t.holdingPeriod.days + 'd'}"></td>
-                    <td th:class="${t.capitalGainLossUsd.signum() < 0 ? 'negative' : ''}"
-                        th:text="${#numbers.formatDecimal(t.capitalGainLossUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:class="${t.capitalGainLossCzkByDate.signum() < 0 ? 'negative' : ''}"
-                        th:text="${#numbers.formatDecimal(t.capitalGainLossCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:class="${t.capitalGainLossCzkByYearlyAvg.signum() < 0 ? 'negative' : ''}"
-                        th:text="${#numbers.formatDecimal(t.capitalGainLossCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${t.capitalGainsExempt ? 'YES' : 'no'}"
-                        th:class="${t.capitalGainsExempt ? 'exempt' : ''}"></td>
-                </tr>
-                <tr class="total-row">
-                    <td colspan="4">TOTAL</td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalPurchaseCostUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalPurchaseCostCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalPurchaseCostCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td colspan="2"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalSaleProceedsUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalSaleProceedsCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalSaleProceedsCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalCapitalGainLossUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalCapitalGainLossCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalCapitalGainLossCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td></td>
-                </tr>
-                <tr class="total-row">
-                    <td colspan="13" th:text="#{report.table.taxable}">TAXABLE (excl. exempt)</td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalTaxableCapitalGainUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalTaxableCapitalGainCzkByDate, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(esppSellReport.totalTaxableCapitalGainCzkByYearlyAvg, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
     <!-- ==================== GRAND TOTAL ==================== -->
     <div class="card">
-        <h2>📋 Grand Total Summary</h2>
+        <h2>&#x1F4CB; <span th:text="#{report.summary.title}">Grand Total Summary</span></h2>
         <table class="summary-table">
             <thead>
                 <tr>
-                    <th>Category</th>
-                    <th>CZK (daily rates)</th>
-                    <th>CZK (yearly avg)</th>
+                    <th th:text="#{report.summary.category}">Category</th>
+                    <th th:text="#{report.summary.czkDaily}">CZK (daily rates)</th>
+                    <th th:text="#{report.summary.czkYearly}">CZK (yearly avg)</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:if="${processRsu}">
-                    <td>RSU Total</td>
+                <tr>
+                    <td th:text="#{report.summary.rsuTotal}">RSU Total</td>
                     <td th:text="${#numbers.formatDecimal(recommendation.rsuTotalDaily, 1, 'COMMA', 2, 'POINT')}"></td>
                     <td th:text="${#numbers.formatDecimal(recommendation.rsuTotalYearly, 1, 'COMMA', 2, 'POINT')}"></td>
                 </tr>
-                <tr th:if="${processEspp}">
-                    <td>ESPP Total</td>
-                    <td th:text="${#numbers.formatDecimal(recommendation.esppTotalDaily, 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td th:text="${#numbers.formatDecimal(recommendation.esppTotalYearly, 1, 'COMMA', 2, 'POINT')}"></td>
-                </tr>
                 <tr class="total-row">
-                    <td><strong>GRAND TOTAL</strong></td>
+                    <td><strong th:text="#{report.summary.grandTotal}">GRAND TOTAL</strong></td>
                     <td th:text="${#numbers.formatDecimal(recommendation.grandTotalDaily, 1, 'COMMA', 2, 'POINT')}"
                         th:class="${recommendation.betterRate == 'daily' ? 'better' : ''}"></td>
                     <td th:text="${#numbers.formatDecimal(recommendation.grandTotalYearly, 1, 'COMMA', 2, 'POINT')}"
@@ -406,30 +278,26 @@
             </tbody>
         </table>
 
-        <p th:if="${(processRsu and rsuSellReport.totalCapitalGainLossCzkByDate.signum() < 0) or (processEspp and esppSellReport.totalCapitalGainLossCzkByDate.signum() < 0)}"
+        <p th:if="${rsuSellReport.totalCapitalGainLossCzkByDate.signum() &lt; 0}"
            style="color: var(--text-muted); margin-top: 12px; font-size: 13px;">
-            ℹ️ Capital loss is not taxable (counted as 0 in totals) but should be reported to the tax authority as evidence.
+            &#x2139;&#xFE0F; <span th:text="#{report.loss.note}">Capital loss is not taxable (counted as 0 in totals) but should be reported to the tax authority as evidence.</span>
         </p>
     </div>
 
     <!-- Recommendation -->
     <div class="card" style="background: var(--rec-bg); border: 2px solid var(--rec-border);">
-        <h2 style="color: var(--rec-heading);">💡 <span th:text="#{report.rec.title}">Recommendation</span></h2>
+        <h2 style="color: var(--rec-heading);">&#x1F4A1; <span th:text="#{report.rec.title}">Recommendation</span></h2>
         <p style="font-size: 18px; margin: 16px 0;">
             <strong th:text="#{report.rec.use}">Use</strong>
             <strong><span th:text="${recommendation.betterRate == 'daily' ? #messages.msg('report.rec.daily') : #messages.msg('report.rec.yearly')}"></span></strong>
             <span th:text="#{report.rec.toDecrease}">to decrease your taxable amount by</span> <strong th:text="${#numbers.formatDecimal(recommendation.taxableDifference, 1, 'COMMA', 2, 'POINT')}"></strong> CZK
         </p>
 
-        <h3 style="color: var(--rec-heading); margin-top: 20px; margin-bottom: 12px;">📊 <span th:text="#{report.incomeSummary.title}">Taxable Income Summary</span></h3>
+        <h3 style="color: var(--rec-heading); margin-top: 20px; margin-bottom: 12px;">&#x1F4CA; <span th:text="#{report.incomeSummary.title}">Taxable Income Summary</span></h3>
         <table style="font-size: 14px; width: auto;">
-            <tr th:if="${processRsu}">
+            <tr>
                 <td style="padding: 4px 16px 4px 0;" th:text="#{report.incomeSummary.rsu}">RSU taxable (daily / yearly):</td>
                 <td th:text="${#numbers.formatDecimal(recommendation.rsuTotalDaily, 1, 'COMMA', 2, 'POINT') + ' / ' + #numbers.formatDecimal(recommendation.rsuTotalYearly, 1, 'COMMA', 2, 'POINT') + ' CZK'}"></td>
-            </tr>
-            <tr th:if="${processEspp}">
-                <td style="padding: 4px 16px 4px 0;" th:text="#{report.incomeSummary.espp}">ESPP taxable (daily / yearly):</td>
-                <td th:text="${#numbers.formatDecimal(recommendation.esppTotalDaily, 1, 'COMMA', 2, 'POINT') + ' / ' + #numbers.formatDecimal(recommendation.esppTotalYearly, 1, 'COMMA', 2, 'POINT') + ' CZK'}"></td>
             </tr>
             <tr style="font-weight: 600;">
                 <td style="padding: 4px 16px 4px 0;" th:text="#{report.incomeSummary.grandTotal}">Grand total (daily / yearly):</td>
@@ -437,7 +305,7 @@
             </tr>
         </table>
 
-        <h3 style="color: var(--rec-heading); margin-top: 24px; margin-bottom: 12px;">💰 <span th:text="#{report.taxDue.title}">Estimated Tax Due</span></h3>
+        <h3 style="color: var(--rec-heading); margin-top: 24px; margin-bottom: 12px;">&#x1F4B0; <span th:text="#{report.taxDue.title}">Estimated Tax Due</span></h3>
         <table style="font-size: 14px; border-collapse: collapse;">
             <thead>
                 <tr style="background: var(--rec-bg);">
@@ -468,12 +336,11 @@
             </tbody>
         </table>
         <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;" th:text="#{report.taxDue.note}">
-            ℹ️ Progressive tax: 15% applies to income up to CZK 1,676,052; 23% applies to income above this threshold.
+            Progressive tax: 15% applies to income up to CZK 1,676,052; 23% applies to income above this threshold.
         </p>
 
         <p style="font-size: 12px; color: var(--text-muted); margin-top: 16px;" th:text="#{report.taxDue.disclaimer}">
-            ⚠️ This is for informational purposes only, not financial or tax advice.
-            Consult a tax professional for your specific situation.
+            This is for informational purposes only, not financial or tax advice.
         </p>
 
         <p style="font-size: 18px; margin: 24px 0 16px 0;">
@@ -486,61 +353,61 @@
         <!-- Fun Savings Equivalents -->
         <div th:if="${recommendation.taxSavings > 0}" style="background: var(--card-bg); border-radius: 8px; padding: 16px; margin: 0 0 20px 0; border: 1px solid var(--border-color);">
             <p style="font-size: 14px; color: var(--text-main); margin: 0 0 12px 0;">
-                <strong>🎉 <span th:text="#{report.rec.enoughFor}">That's enough for:</span></strong>
+                <strong>&#x1F389; <span th:text="#{report.rec.enoughFor}">That's enough for:</span></strong>
             </p>
             <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-muted);">
                 <!-- Always show lunches -->
                 <li style="margin-bottom: 6px;">
                     <strong th:text="${#numbers.formatDecimal(recommendation.taxSavings / 200, 0, 'COMMA', 0, 'POINT')}"></strong>
-                    <span th:text="#{report.rec.lunches}">lunches in Karlín 🍽️ (@ 200 CZK each)</span>
+                    <span th:text="#{report.rec.lunches}">lunches in Karlin (@ 200 CZK each)</span>
                 </li>
 
                 <!-- < 2.5k CZK -->
-                <li th:if="${recommendation.taxSavings < 2500}" style="margin-bottom: 6px;" th:text="#{report.rec.fancyDinner}">
-                    A fancy dinner for two at Lokál 🍺
+                <li th:if="${recommendation.taxSavings &lt; 2500}" style="margin-bottom: 6px;" th:text="#{report.rec.fancyDinner}">
+                    A fancy dinner for two
                 </li>
 
                 <!-- 2.5k - 6k CZK -->
-                <li th:if="${recommendation.taxSavings >= 2500 and recommendation.taxSavings < 6000}" style="margin-bottom: 6px;" th:text="#{report.rec.groceries}">
-                    Two weeks of groceries for a family of four 🛒
+                <li th:if="${recommendation.taxSavings >= 2500 and recommendation.taxSavings &lt; 6000}" style="margin-bottom: 6px;" th:text="#{report.rec.groceries}">
+                    Two weeks of groceries for a family of four
                 </li>
 
                 <!-- 6k - 23k CZK -->
-                <li th:if="${recommendation.taxSavings >= 6000 and recommendation.taxSavings < 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.music}">
-                    A year of music classes for your kid 🎹
+                <li th:if="${recommendation.taxSavings >= 6000 and recommendation.taxSavings &lt; 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.music}">
+                    A year of music classes for your kid
                 </li>
-                <li th:if="${recommendation.taxSavings >= 6000 and recommendation.taxSavings < 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.golf}">
-                    A few rounds of golf on a nice 18-hole course ⛳
+                <li th:if="${recommendation.taxSavings >= 6000 and recommendation.taxSavings &lt; 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.golf}">
+                    A few rounds of golf on a nice 18-hole course
                 </li>
 
                 <!-- >= 23k CZK -->
                 <li th:if="${recommendation.taxSavings >= 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.insurance}">
-                    Annual comprehensive car insurance 🚗
+                    Annual comprehensive car insurance
                 </li>
                 <li th:if="${recommendation.taxSavings >= 23000}" style="margin-bottom: 6px;" th:text="#{report.rec.phone}">
-                    A brand new flagship smartphone 📱
+                    A brand new flagship smartphone
                 </li>
                 <li th:if="${recommendation.taxSavings >= 23000}" style="margin-bottom: 6px;">
                     <strong th:text="${#numbers.formatDecimal(recommendation.taxSavings / 160000, 1, 'COMMA', 1, 'POINT')}"></strong>
-                    <span th:text="#{report.rec.apartment}">m² of Prague apartment (@ 160k CZK/m²) 🏠</span>
+                    <span th:text="#{report.rec.apartment}">m2 of Prague apartment (@ 160k CZK/m2)</span>
                 </li>
             </ul>
             <p style="font-size: 12px; color: var(--text-muted); margin: 12px 0 0 0; font-style: italic;" th:text="#{report.rec.smart}">
-                Smart tax planning = more money for the things that matter! 💰
+                Smart tax planning = more money for the things that matter!
             </p>
         </div>
     </div>
 
     <!-- Support Banner -->
     <div class="card" style="background: linear-gradient(135deg, var(--banner-bg-1) 0%, var(--banner-bg-2) 100%); border: none; color: var(--banner-text); text-align: center;">
-        <h3 style="color: var(--banner-text); margin-top: 0;">☕ <span th:text="#{support.banner.title}">Did this save you time or money?</span></h3>
+        <h3 style="color: var(--banner-text); margin-top: 0;">&#9749; <span th:text="#{support.banner.title}">Did this save you time or money?</span></h3>
         <p style="margin: 8px 0; opacity: 0.9;" th:text="#{support.banner.desc}">Consider buying me a coffee via my Revolut tag to support this project!</p>
         <a href="https://revolut.me/los" target="_blank" style="font-size: 28px; font-weight: bold; background: var(--banner-text); color: var(--banner-bg-1); padding: 8px 28px; border-radius: 25px; display: inline-block; margin: 12px 0; text-decoration: none;">
             @los
         </a>
         <p style="margin: 8px 0; opacity: 0.9; font-size: 14px;">
             <a href="https://revolut.me/los" target="_blank" style="color: var(--banner-text); font-weight: 600;">revolut.me/los</a>
-            <span style="opacity: 0.7;">· @los is my <span th:text="#{support.banner.tag}">Revolut tag</span> · <span th:text="#{support.banner.appreciate}">Any amount appreciated</span> 💜</span>
+            <span style="opacity: 0.7;">- @los is my <span th:text="#{support.banner.tag}">Revolut tag</span> - <span th:text="#{support.banner.appreciate}">Any amount appreciated</span> &#x1F49C;</span>
         </p>
     </div>
 
@@ -551,4 +418,3 @@
     </div>
 </body>
 </html>
-

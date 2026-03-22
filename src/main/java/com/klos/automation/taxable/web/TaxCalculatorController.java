@@ -18,21 +18,27 @@ import java.util.*;
 public class TaxCalculatorController {
 
     private final TaxCalculationService calculationService;
+    private final FidelityCalculationService fidelityCalculationService;
 
-    public TaxCalculatorController(TaxCalculationService calculationService) {
+    public TaxCalculatorController(TaxCalculationService calculationService,
+                                   FidelityCalculationService fidelityCalculationService) {
         this.calculationService = calculationService;
+        this.fidelityCalculationService = fidelityCalculationService;
     }
+
+    // ==================== LANDING PAGE ====================
 
     @GetMapping("/")
-    public String index(Model model) {
-        // Default to previous year (e.g., 2025 when in 2026) - most common use case for tax filing
-        model.addAttribute("currentYear", LocalDate.now().getYear() - 1);
-        return "index";
+    public String landing() {
+        return "landing";
     }
 
-    @GetMapping("/tax-guide")
-    public String taxGuide() {
-        return "tax-guide";
+    // ==================== E-TRADE FLOW ====================
+
+    @GetMapping("/etrade")
+    public String etradeIndex(Model model) {
+        model.addAttribute("currentYear", LocalDate.now().getYear() - 1);
+        return "etrade";
     }
 
     @PostMapping("/calculate")
@@ -50,7 +56,7 @@ public class TaxCalculatorController {
             if (!processRsu && !processEspp) {
                 model.addAttribute("error", "Please select at least one plan type (RSU or ESPP)");
                 model.addAttribute("currentYear", LocalDate.now().getYear() - 1);
-                return "index";
+                return "etrade";
             }
 
             BigDecimal yearlyRate = null;
@@ -98,10 +104,69 @@ public class TaxCalculatorController {
             e.printStackTrace();
             model.addAttribute("error", "Error processing files: " + e.getMessage());
             model.addAttribute("currentYear", LocalDate.now().getYear() - 1);
-            return "index";
+            return "etrade";
         }
     }
-    
+
+    // ==================== FIDELITY FLOW ====================
+
+    @GetMapping("/fidelity")
+    public String fidelityIndex(Model model) {
+        model.addAttribute("currentYear", LocalDate.now().getYear() - 1);
+        return "fidelity";
+    }
+
+    @PostMapping("/fidelity/calculate")
+    public String fidelityCalculate(
+            @RequestParam("transactionSummaryFile") MultipartFile transactionSummaryFile,
+            @RequestParam("taxYear") int taxYear,
+            Model model) {
+
+        try {
+            TaxCalculationResult result = fidelityCalculationService.calculate(
+                    transactionSummaryFile.getInputStream(),
+                    taxYear
+            );
+
+            // Build exchange rate reference table from vest events and sell transactions
+            Map<LocalDate, BigDecimal> exchangeRates = new TreeMap<>();
+            for (TaxableVestEvent v : result.rsuVestingReport().vestEvents()) {
+                exchangeRates.put(v.vestDate(), v.vestDateRate());
+            }
+            for (TaxableTransaction t : result.rsuSellReport().transactions()) {
+                exchangeRates.put(t.vestDate(), t.vestDateRate());
+                exchangeRates.put(t.sellDate(), t.sellDateRate());
+            }
+
+            // Calculate recommendation (RSU vesting + sell for Fidelity)
+            RateRecommendation recommendation = calculateRecommendation(result);
+
+            model.addAttribute("rsuVestingReport", result.rsuVestingReport());
+            model.addAttribute("rsuSellReport", result.rsuSellReport());
+            model.addAttribute("logMessages", result.logMessages());
+            model.addAttribute("exchangeRates", exchangeRates);
+            model.addAttribute("taxYear", taxYear);
+            model.addAttribute("recommendation", recommendation);
+
+            return "fidelity-results";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Error processing Fidelity PDF: " + e.getMessage());
+            model.addAttribute("currentYear", LocalDate.now().getYear() - 1);
+            return "fidelity";
+        }
+    }
+
+    // ==================== TAX GUIDE ====================
+
+    @GetMapping("/tax-guide")
+    public String taxGuide() {
+        return "tax-guide";
+    }
+
+    // ==================== HELPERS ====================
+
     private Map<LocalDate, BigDecimal> buildExchangeRateTable(TaxCalculationResult result) {
         Map<LocalDate, BigDecimal> rates = new TreeMap<>();
 
@@ -172,4 +237,3 @@ public class TaxCalculatorController {
             String betterRate, BigDecimal taxableDifference, BigDecimal taxSavings
     ) {}
 }
-
