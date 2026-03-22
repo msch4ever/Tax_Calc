@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fidelity — Stock Tax Calculator (RSU)</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px var(--card-shadow);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        input[type="file"], input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="file"] { padding: 8px; }
+        .hint {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        button {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .error {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+        .info-box {
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .info-box h3 { margin-top: 0; }
+        .info-box ul { margin: 0; padding-left: 20px; }
+        .limited-banner {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .limited-banner strong { font-size: 16px; }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+        .checkbox-item label {
+            display: inline;
+            font-weight: 600;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="support-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span>☕ <strong>Found this useful?</strong> Buy me a coffee via my Revolut tag!</span>
+        <a href="https://revolut.me/los" target="_blank" style="background: white; color: #667eea; padding: 4px 16px; border-radius: 15px; font-weight: bold; text-decoration: none;">@los</a>
+        <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> 💜</span>
+    </div>
+
+    <div class="lang-box">
+        <a href="?lang=en" class="lang-flag">🇬🇧 EN</a>
+        <a href="?lang=cs" class="lang-flag">🇨🇿 CZ</a>
+        <a href="?lang=ua" class="lang-flag">🇺🇦 UA</a>
+        <a href="?lang=ru" class="lang-flag">🇺🇳 RU</a>
+        <button onclick="toggleTheme()" class="theme-toggle">
+            <span class="theme-text dark-text" th:text="#{nav.theme.toggle.dark}">Toggle Dark Mode</span>
+            <span class="theme-text light-text" th:text="#{nav.theme.toggle.light}">Toggle Light Mode</span>
+            <span class="light-icon">☀️</span>
+            <span class="dark-icon">🌙</span>
+        </button>
+    </div>
+
+    <p><a href="/" style="color: var(--link-color); text-decoration: none;">← Back to Broker Selection</a></p>
+    <h1>🏦 Fidelity — <span th:text="#{app.title.cz}">Stock Tax Calculator</span></h1>
+
+    <div class="limited-banner">
+        <strong>⚠️ Limited Support</strong>
+        <p style="margin: 4px 0 0 0; font-size: 13px;">
+            Fidelity NetBenefits does not export detailed data files like E-Trade.
+            Currently only <strong>RSU stock sales (Capital Gains/Losses)</strong> are supported,
+            extracted from the "Custom Transaction Summary" PDF.
+            Vesting income and ESPP data are not available from this export.
+        </p>
+    </div>
+
+    <div class="card">
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+
+        <form action="/fidelity/calculate" method="post" enctype="multipart/form-data" id="calcForm">
+
+            <div class="form-group">
+                <label>Supported Plan Types</label>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="processRsu" checked disabled>
+                    <label for="processRsu">RSU (Restricted Stock Units) — Stock Sales Only</label>
+                </div>
+                <p class="hint" style="margin-top: 8px; color: var(--text-muted);">
+                    ℹ️ Only RSU capital gains/losses can be calculated from the Fidelity PDF export.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="transactionSummaryFile">Custom Transaction Summary (PDF)</label>
+                <input type="file" id="transactionSummaryFile" name="transactionSummaryFile" accept=".pdf" required>
+                <p class="hint">
+                    Fidelity NetBenefits → Stock Plan → Activity &amp; Orders → Custom Transaction Summary → Select Date Range → Download PDF
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="taxYear" th:text="#{form.taxYear}">Tax Year</label>
+                <input type="number" id="taxYear" name="taxYear" th:value="${currentYear}" min="2020" max="2030" required>
+            </div>
+
+            <div class="form-group">
+                <label th:text="#{form.exchangeRates}">Exchange Rates</label>
+                <p class="hint" style="margin-top: 0;">
+                    <strong>Yearly Average Rates (GFŘ "jednotný kurz"):</strong><br>
+                    2019: 22.93 | 2020: 23.14 | 2021: 21.72 | 2022: 23.41 | 2023: 22.14 | 2024: 23.28 | <strong>2025: 21.84</strong><br>
+                    Daily rates are fetched from CNB for all years.
+                </p>
+            </div>
+
+            <button type="submit" id="submitBtn" th:text="#{form.calculate}">Calculate</button>
+        </form>
+    </div>
+
+    <div class="info-box">
+        <h3>ℹ️ How to export from Fidelity NetBenefits</h3>
+        <ul>
+            <li><strong>Custom Transaction Summary</strong> (PDF):<br>
+                Fidelity NetBenefits → Stock Plan → Activity &amp; Orders → Custom Transaction Summary<br>
+                Select date range for your tax year → Download PDF<br>
+                <span style="color:var(--text-muted)">(The PDF contains a "Stock sales" section with Cost Basis, Proceeds, and Gain/Loss)</span></li>
+        </ul>
+        <p style="margin-top: 12px; color: var(--text-muted); font-size: 12px;">
+            ⚠️ The Fidelity CSV export ("Transaction history") is not sufficient — it lacks cost basis data needed for tax calculations.
+        </p>
+    </div>
+
+    <div class="info-box" style="background: var(--guide-bg); border-color: var(--guide-border);">
+        <h3 th:text="#{info.guideTitle}">📄 Tax Guide</h3>
+        <p style="margin: 0;">
+            <a href="/tax-guide" style="color: var(--link-color); font-weight: 600;" th:text="#{info.guideLink}">
+                📖 View: Czech Tax Rules for RSU &amp; ESPP Income
+            </a>
+        </p>
+    </div>
+
+    <div class="info-box" style="background: linear-gradient(135deg, var(--banner-bg-1) 0%, var(--banner-bg-2) 100%); border: none; color: var(--banner-text); text-align: center;">
+        <h3 style="color: var(--banner-text); margin-top: 0;" th:text="#{support.boxTitle}">☕ Support This Project</h3>
+        <p style="margin: 8px 0; opacity: 0.9;">If this tool saved you time or money, consider buying me a coffee via my Revolut tag!</p>
+        <a href="https://revolut.me/los" target="_blank" style="font-size: 24px; font-weight: bold; background: var(--banner-text); color: var(--banner-bg-1); padding: 6px 20px; border-radius: 20px; display: inline-block; margin: 8px 0; text-decoration: none;">
+            @los
+        </a>
+        <p style="margin: 8px 0; opacity: 0.8; font-size: 13px;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: var(--banner-text);">revolut.me/los</a> · Any amount appreciated 💜</p>
+    </div>
+</body>
+</html>

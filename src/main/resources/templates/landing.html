@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Tax Calculator — Choose Your Broker</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .broker-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+        .broker-card {
+            border-radius: 12px;
+            padding: 32px 24px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: block;
+            position: relative;
+        }
+        .broker-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px var(--card-shadow);
+        }
+        .broker-card .broker-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .broker-card h2 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+        }
+        .broker-card .broker-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0 0 16px 0;
+        }
+        .broker-card .broker-formats {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: var(--bg-secondary, rgba(0,0,0,0.04));
+        }
+        .badge-limited {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #f59e0b;
+            color: #000;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="support-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span>☕ <strong>Found this useful?</strong> Buy me a coffee via my Revolut tag!</span>
+        <a href="https://revolut.me/los" target="_blank" style="background: white; color: #667eea; padding: 4px 16px; border-radius: 15px; font-weight: bold; text-decoration: none;">@los</a>
+        <span style="font-size: 12px; opacity: 0.8;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: white;">revolut.me/los</a> 💜</span>
+    </div>
+
+    <div class="lang-box">
+        <a href="?lang=en" class="lang-flag">🇬🇧 EN</a>
+        <a href="?lang=cs" class="lang-flag">🇨🇿 CZ</a>
+        <a href="?lang=ua" class="lang-flag">🇺🇦 UA</a>
+        <a href="?lang=ru" class="lang-flag">🇺🇳 RU</a>
+        <button onclick="toggleTheme()" class="theme-toggle">
+            <span class="theme-text dark-text">🌙 Dark</span>
+            <span class="theme-text light-text">☀️ Light</span>
+            <span class="light-icon">☀️</span>
+            <span class="dark-icon">🌙</span>
+        </button>
+    </div>
+
+    <h1>🇨🇿 <span th:text="#{app.title.cz}">Czech Stock Tax Calculator</span></h1>
+    <p class="subtitle" th:text="#{form.subtitle}">Calculate taxable amounts for stock compensation according to Czech tax law.</p>
+
+    <div class="broker-grid">
+        <a href="/etrade" class="broker-card" id="etrade-card">
+            <div class="broker-icon">📈</div>
+            <h2>E-Trade</h2>
+            <p class="broker-desc">
+                Full support for RSU and ESPP transactions.<br>
+                Vesting income + Capital gains/losses.
+            </p>
+            <div class="broker-formats">
+                📂 Accepts: <strong>BenefitHistory.xlsx</strong> + <strong>GainsLosses.xlsx</strong>
+            </div>
+        </a>
+
+        <a href="/fidelity" class="broker-card" id="fidelity-card">
+            <span class="badge-limited">Limited</span>
+            <div class="broker-icon">🏦</div>
+            <h2>Fidelity</h2>
+            <p class="broker-desc">
+                RSU stock sales only.<br>
+                Capital gains/losses from PDF export.
+            </p>
+            <div class="broker-formats">
+                📂 Accepts: <strong>Custom Transaction Summary (PDF)</strong>
+            </div>
+        </a>
+    </div>
+
+    <div class="info-box" style="margin-top: 24px; background: var(--guide-bg); border-color: var(--guide-border);">
+        <h3 th:text="#{info.guideTitle}">📄 Tax Guide</h3>
+        <p style="margin: 0;">
+            <a href="/tax-guide" style="color: var(--link-color); font-weight: 600;" th:text="#{info.guideLink}">
+                📖 View: Czech Tax Rules for RSU &amp; ESPP Income
+            </a>
+        </p>
+        <p class="hint" style="margin-top: 8px;" th:text="#{info.guideHint}">Learn how to properly report stock compensation in your Czech tax return with examples.</p>
+    </div>
+
+    <div class="info-box" style="margin-top: 16px; background: linear-gradient(135deg, var(--banner-bg-1) 0%, var(--banner-bg-2) 100%); border: none; color: var(--banner-text); text-align: center;">
+        <h3 style="color: var(--banner-text); margin-top: 0;" th:text="#{support.boxTitle}">☕ Support This Project</h3>
+        <p style="margin: 8px 0; opacity: 0.9;">If this tool saved you time or money, consider buying me a coffee via my Revolut tag!</p>
+        <a href="https://revolut.me/los" target="_blank" style="font-size: 24px; font-weight: bold; background: var(--banner-text); color: var(--banner-bg-1); padding: 6px 20px; border-radius: 20px; display: inline-block; margin: 8px 0; text-decoration: none;">
+            @los
+        </a>
+        <p style="margin: 8px 0; opacity: 0.8; font-size: 13px;">Revolut tag · <a href="https://revolut.me/los" target="_blank" style="color: var(--banner-text);">revolut.me/los</a> · Any amount appreciated 💜</p>
+    </div>
+</body>
+</html>
