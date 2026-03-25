@@ -44,18 +44,22 @@ public class TaxCalculationService {
 
         // Read benefit history file bytes once (we may need to read it twice for RSU and ESPP)
         byte[] benefitHistoryBytes = benefitHistoryStream.readAllBytes();
-        byte[] gainsLossesBytes = gainsLossesStream.readAllBytes();
+        byte[] gainsLossesBytes = gainsLossesStream != null ? gainsLossesStream.readAllBytes() : null;
 
         // Process RSU if selected
         if (processRsu) {
             rsuVestingReport = calculateRsuVesting(benefitHistoryBytes, benefitHistoryFilename, taxYear, rateProvider, log);
-            rsuSellReport = calculateSellTransactions(gainsLossesBytes, gainsLossesFilename, taxYear, rateProvider, log, PlanType.RS, "RSU");
+            if (gainsLossesBytes != null) {
+                rsuSellReport = calculateSellTransactions(gainsLossesBytes, gainsLossesFilename, taxYear, rateProvider, log, PlanType.RS, "RSU");
+            }
         }
 
         // Process ESPP if selected
         if (processEspp) {
             esppPurchaseReport = calculateEsppPurchases(benefitHistoryBytes, benefitHistoryFilename, taxYear, rateProvider, log);
-            esppSellReport = calculateSellTransactions(gainsLossesBytes, gainsLossesFilename, taxYear, rateProvider, log, PlanType.ESPP, "ESPP");
+            if (gainsLossesBytes != null) {
+                esppSellReport = calculateSellTransactions(gainsLossesBytes, gainsLossesFilename, taxYear, rateProvider, log, PlanType.ESPP, "ESPP");
+            }
         }
 
         return new TaxCalculationResult(
