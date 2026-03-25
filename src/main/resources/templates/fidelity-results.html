@@ -284,6 +284,42 @@
         </p>
     </div>
 
+    <!-- ==================== TAX SUMMARY ==================== -->
+    <div class="card">
+        <h2>🏦 <span th:text="#{report.taxSummary.title}">Tax Summary</span></h2>
+        <table class="summary-table">
+            <thead>
+            <tr>
+                <th th:text="#{report.summary.category}">Category</th>
+                <th th:text="#{report.summary.czkDaily}">CZK (daily rates)</th>
+                <th th:text="#{report.summary.czkYearly}">CZK (yearly avg)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="#{report.taxSummary.vestingTotal}">Vesting Income Total</td>
+                <td th:text="${#numbers.formatDecimal(recommendation.vestTotalDaily, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td th:text="${#numbers.formatDecimal(recommendation.vestTotalYearly, 1, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr>
+                <td th:text="#{report.taxSummary.sellProceeds}">Sale Proceeds (Line 207)</td>
+                <td th:text="${#numbers.formatDecimal(recommendation.sellTotalProceedsDaily, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td th:text="${#numbers.formatDecimal(recommendation.sellTotalProceedsYearly, 1, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr>
+                <td th:text="#{report.taxSummary.sellExpenses}">Sale Expenses (Line 208)</td>
+                <td th:text="${#numbers.formatDecimal(recommendation.sellTotalCostsDaily, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td th:text="${#numbers.formatDecimal(recommendation.sellTotalCostsYearly, 1, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            <tr>
+                <td th:text="#{report.taxSummary.sellGainLoss}">Sale Profit/Loss</td>
+                <td th:text="${#numbers.formatDecimal(recommendation.totalGainsLossesDaily, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td th:text="${#numbers.formatDecimal(recommendation.totalGainsLossesYearly, 1, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <!-- Recommendation -->
     <div class="card" style="background: var(--rec-bg); border: 2px solid var(--rec-border);">
         <h2 style="color: var(--rec-heading);">&#x1F4A1; <span th:text="#{report.rec.title}">Recommendation</span></h2>
