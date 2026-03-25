@@ -45,7 +45,7 @@ public class TaxCalculatorController {
     @PostMapping("/calculate")
     public String calculate(
             @RequestParam("benefitHistoryFile") MultipartFile benefitHistoryFile,
-            @RequestParam("gainsLossesFile") MultipartFile gainsLossesFile,
+            @RequestParam(value = "gainsLossesFile", required = false) MultipartFile gainsLossesFile,
             @RequestParam("taxYear") int taxYear,
             @RequestParam(value = "yearlyRate", required = false) String yearlyRateStr,
             @RequestParam(value = "processRsu", required = false) boolean processRsu,
@@ -65,11 +65,13 @@ public class TaxCalculatorController {
                 yearlyRate = new BigDecimal(yearlyRateStr.trim());
             }
 
+            boolean hasGainsLosses = gainsLossesFile != null && !gainsLossesFile.isEmpty();
+
             TaxCalculationResult result = calculationService.calculate(
                     benefitHistoryFile.getInputStream(),
                     benefitHistoryFile.getOriginalFilename(),
-                    gainsLossesFile.getInputStream(),
-                    gainsLossesFile.getOriginalFilename(),
+                    hasGainsLosses ? gainsLossesFile.getInputStream() : null,
+                    hasGainsLosses ? gainsLossesFile.getOriginalFilename() : null,
                     taxYear,
                     yearlyRate,
                     processRsu,
