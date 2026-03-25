@@ -202,7 +202,7 @@ public class TaxCalculatorController {
         BigDecimal rsuTotalDaily = rsuIncomeDaily.add(rsuGainsDaily);
         BigDecimal rsuTotalYearly = rsuIncomeYearly.add(rsuGainsYearly);
         BigDecimal rsuSellCostsDaily = result.rsuSellReport().totalPurchaseCostCzkByDate();
-        BigDecimal rsuSellCostsYearly = result.rsuSellReport().totalVestIncomeCzkByYearlyAvg();
+        BigDecimal rsuSellCostsYearly = result.rsuSellReport().totalPurchaseCostCzkByYearlyAvg();
         BigDecimal rsuSellProceedsDaily = result.rsuSellReport().totalSaleProceedsCzkByDate();
         BigDecimal rsuSellProceedsYearly = result.rsuSellReport().totalSaleProceedsCzkByYearlyAvg();
 
@@ -214,19 +214,19 @@ public class TaxCalculatorController {
         BigDecimal esppTotalDaily = esppIncomeDaily.add(esppGainsDaily);
         BigDecimal esppTotalYearly = esppIncomeYearly.add(esppGainsYearly);
         BigDecimal esppSellCostsDaily = result.esppSellReport().totalPurchaseCostCzkByDate();
-        BigDecimal esppSellCostsYearly = result.esppSellReport().totalVestIncomeCzkByYearlyAvg();
+        BigDecimal esppSellCostsYearly = result.esppSellReport().totalPurchaseCostCzkByYearlyAvg();
         BigDecimal esppSellProceedsDaily = result.esppSellReport().totalSaleProceedsCzkByDate();
         BigDecimal esppSellProceedsYearly = result.esppSellReport().totalSaleProceedsCzkByYearlyAvg();
 
         // Tax summary totals
-        BigDecimal vestTotalDaily = rsuIncomeDaily.add(esppIncomeDaily).setScale(0, RoundingMode.HALF_UP);
-        BigDecimal vestTotalYearly = rsuIncomeYearly.add(esppIncomeYearly).setScale(0, RoundingMode.HALF_UP);
-        BigDecimal sellTotalProceedsDaily = rsuSellProceedsDaily.add(esppSellProceedsDaily).setScale(0, RoundingMode.HALF_UP);
-        BigDecimal sellTotalProceedsYearly = rsuSellProceedsYearly.add(esppSellProceedsYearly).setScale(0, RoundingMode.HALF_UP);
-        BigDecimal sellTotalCostsDaily = rsuSellCostsDaily.add(esppSellCostsDaily).setScale(0, RoundingMode.HALF_UP);
-        BigDecimal sellTotalCostsYearly = rsuSellCostsYearly.add(esppSellCostsYearly).setScale(0, RoundingMode.HALF_UP);
-        BigDecimal totalGainsLossesDaily = sellTotalProceedsDaily.subtract(sellTotalCostsDaily).setScale(0, RoundingMode.HALF_UP);
-        BigDecimal totalGainsLossesYearly = sellTotalProceedsYearly.subtract(sellTotalCostsYearly).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal vestTotalDaily = rsuIncomeDaily.add(esppIncomeDaily);
+        BigDecimal vestTotalYearly = rsuIncomeYearly.add(esppIncomeYearly);
+        BigDecimal sellTotalProceedsDaily = rsuSellProceedsDaily.add(esppSellProceedsDaily);
+        BigDecimal sellTotalProceedsYearly = rsuSellProceedsYearly.add(esppSellProceedsYearly);
+        BigDecimal sellTotalCostsDaily = rsuSellCostsDaily.add(esppSellCostsDaily);
+        BigDecimal sellTotalCostsYearly = rsuSellCostsYearly.add(esppSellCostsYearly);
+        BigDecimal totalGainsLossesDaily = sellTotalProceedsDaily.subtract(sellTotalCostsDaily);
+        BigDecimal totalGainsLossesYearly = sellTotalProceedsYearly.subtract(sellTotalCostsYearly);
 
         // Grand totals
         BigDecimal grandTotalDaily = rsuTotalDaily.add(esppTotalDaily);
