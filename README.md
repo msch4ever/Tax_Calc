@@ -432,6 +432,8 @@ Add ESPP purchase discount calculation
 
 ## 🚧 Changelog — Recently Completed
 
+- [x] **Optional Gains & Losses File** - New employees who haven't sold shares can now skip the G&L upload and still get vesting/ESPP reports
+- [x] **Tax Summary Section** - New summary card with totals aligned to Czech tax form (Příloha č.2, ř.207/208) — added to both E-Trade and Fidelity results (thanks @JanVerner for the initial PR!)
 - [x] **Fidelity NetBenefits Support** - RSU vesting income + capital gains from PDF exports
 - [x] **Broker Selection Landing Page** - Choose between E-Trade and Fidelity at `/`
 - [x] **Dark/Light Mode** - Theme toggle with persistent preference
