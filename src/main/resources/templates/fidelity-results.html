@@ -379,6 +379,10 @@
             This is for informational purposes only, not financial or tax advice.
         </p>
 
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;" th:utext="#{report.fxLegal.note}">
+            📜 Legal basis: Czech law allows individuals to use either daily CNB rates or the GFŘ yearly unified rate...
+        </p>
+
         <p style="font-size: 18px; margin: 24px 0 16px 0;">
             <span th:text="#{report.rec.savingStart}">According to our calculations you are saving</span>
             <strong th:text="${#numbers.formatDecimal(recommendation.taxSavings, 1, 'COMMA', 2, 'POINT')}"></strong> CZK
